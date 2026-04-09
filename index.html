@@ -11,7 +11,9 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icons/icon-192x192-A.png" type="image/png" />
   <title>MealPrep</title>
-  
+
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
   <style>
     /* Reset & Base Styles */
     * {
@@ -27,7 +29,7 @@
       line-height: 1.5;
       display: flex;
       flex-direction: column;
-      min-height: screen;
+      min-height: 100vh;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
@@ -62,10 +64,24 @@
       align-items: center;
     }
 
-    header h1 { font-size: 1.5rem; font-weight: 700; }
-    header p { font-size: 0.875rem; color: #f0fff4; opacity: 0.9; }
+    /* Update Font MealPrep ke Pacifico */
+    header h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 1.8rem;
+      font-weight: 400;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
 
-    .notif-icon { position: relative; }
+    header p {
+      font-size: 0.875rem;
+      color: #f0fff4;
+      opacity: 0.9;
+    }
+
+    .notif-icon {
+      position: relative;
+    }
+
     .notif-badge {
       position: absolute;
       top: -0.25rem;
@@ -88,7 +104,7 @@
       border-radius: 1rem;
       margin-bottom: 1.5rem;
       border: 1px solid #f3f4f6;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     .card-title-box {
@@ -126,10 +142,9 @@
       transition: background 0.2s, transform 0.1s;
     }
 
-    .btn-primary:hover { background-color: #6da36c; }
     .btn-primary:active { transform: scale(0.98); }
 
-    /* Inventory Items */
+    /* Inventory Items & H-2 Reminder */
     .inventory-item {
       display: flex;
       justify-content: space-between;
@@ -166,17 +181,55 @@
       border: 1px solid #f3f4f6;
     }
 
-    .recipe-img {
-      width: 100%;
-      height: 8rem;
-      object-fit: cover;
-    }
-
+    .recipe-img { width: 100%; height: 8rem; object-fit: cover; }
     .recipe-info { padding: 1rem; }
     .recipe-header { display: flex; justify-content: space-between; align-items: flex-start; }
     .recipe-cal { text-align: right; color: #7FB77E; font-weight: 700; }
     .recipe-cal span { font-size: 1.25rem; }
-    .recipe-cal small { display: block; font-size: 0.75rem; color: #6b7280; font-weight: 400; }
+    .recipe-cal small { display: block; font-size: 0.75rem; color: #6b7280; }
+
+    /* Modal Resep & Takaran */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: flex-end;
+    }
+
+    .modal-content {
+      background: white;
+      width: 100%;
+      max-width: 28rem;
+      margin: 0 auto;
+      border-top-left-radius: 1.5rem;
+      border-top-right-radius: 1.5rem;
+      padding: 2rem;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      font-size: 2rem;
+      color: #9ca3af;
+      cursor: pointer;
+    }
+
+    .ingredient-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      border-bottom: 1px dashed #e5e7eb;
+      font-size: 0.875rem;
+    }
+
+    .step-list { margin-top: 1rem; padding-left: 1.25rem; font-size: 0.875rem; }
+    .step-list li { margin-bottom: 0.5rem; }
 
     /* Utility */
     .hidden { display: none; }
@@ -205,7 +258,11 @@
       </div>
       <div class="notif-icon">
         <span class="notif-badge">2</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
       </div>
     </div>
   </header>
@@ -214,15 +271,17 @@
     <section class="card">
       <div class="card-title-box">
         <div class="icon-bg icon-green">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+            <line x1="1" y1="10" x2="23" y2="10"></line>
+          </svg>
         </div>
         <h2 style="font-weight: 600;">Scan Struk Belanja</h2>
       </div>
-      <p class="text-sm" style="margin-bottom: 1.25rem;">Pindai struk untuk mencatat bahan makanan & tanggal kadaluarsa otomatis.</p>
-      
+      <p class="text-sm" style="margin-bottom: 1.25rem;">Pindai struk untuk mencatat inventori & kadaluarsa otomatis.</p>
       <input type="file" id="scanBill" accept="image/*" capture="environment" class="hidden">
       <button onclick="document.getElementById('scanBill').click()" class="btn-primary">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
         Ambil Foto Struk
       </button>
     </section>
@@ -231,89 +290,150 @@
       <div class="card-title-box" style="justify-content: space-between; margin-bottom: 1rem;">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
           <div class="icon-bg icon-amber">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2"></path><path d="M21 12v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6"></path><path d="M3 8h18"></path><path d="M10 12h4"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2"></path>
+              <path d="M21 12v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6"></path>
+              <path d="M3 8h18"></path>
+            </svg>
           </div>
           <h2 style="font-weight: 600;">Isi Kulkas Anda</h2>
         </div>
-        <a href="#" style="font-size: 0.75rem; color: #7FB77E; text-decoration: none; font-weight: 500;">Lihat Semua</a>
       </div>
 
-      <div class="inventory-item item-exp">
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-          <span style="font-size: 1.5rem;">🥛</span>
-          <div>
-            <p style="font-size: 0.875rem; font-weight: 500;">Susu UHT Full Cream</p>
-            <p class="text-xs">Exp: 11 Apr 2026</p>
+      <div id="inventoryList">
+        <div class="inventory-item item-exp">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.5rem;">🥛</span>
+            <div>
+              <p style="font-size: 0.875rem; font-weight: 500;">Susu UHT Full Cream</p>
+              <p class="text-xs">Exp: 11 Apr 2026</p>
+            </div>
           </div>
+          <span class="badge-danger">⚠️ 2 Hari!</span>
         </div>
-        <span class="badge-danger">⚠️ 2 Hari!</span>
-      </div>
 
-      <div class="inventory-item item-safe">
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-          <span style="font-size: 1.5rem;">🍗</span>
-          <div>
-            <p style="font-size: 0.875rem; font-weight: 500;">Dada Ayam Fillet</p>
-            <p class="text-xs">Exp: 20 Apr 2026</p>
+        <div class="inventory-item item-safe">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.5rem;">🍗</span>
+            <div>
+              <p style="font-size: 0.875rem; font-weight: 500;">Dada Ayam Fillet</p>
+              <p class="text-xs">Exp: 20 Apr 2026</p>
+            </div>
           </div>
+          <span style="color: #10B981; font-size: 0.75rem; font-weight: 600;">Aman</span>
         </div>
-        <span style="color: #10B981; font-size: 0.75rem; font-weight: 600;">Aman</span>
       </div>
     </section>
 
     <section class="card">
       <div class="card-title-box">
         <div class="icon-bg icon-green">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
         </div>
         <h2 style="font-weight: 600;">Ide Masakan Hari Ini</h2>
       </div>
-
-      <div class="recipe-card">
-        <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=60" alt="Food" class="recipe-img">
-        <div class="recipe-info">
-          <div class="recipe-header">
-            <h3 style="font-weight: 700; color: #374151;">Salad Ayam Sehat</h3>
-            <div class="recipe-cal">
-              <span>320</span>
-              <small>kkal</small>
-            </div>
-          </div>
-          <p class="text-xs" style="margin: 0.5rem 0 1rem 0;">Gunakan Dada Ayam & Sayuran yang ada di kulkas agar tidak terbuang.</p>
-          <button onclick="alert('Resep dipilih! Kalori ditambahkan.')" class="btn-primary" style="font-size: 0.875rem; padding: 0.5rem;">
-            Masak Ini
-          </button>
-        </div>
-      </div>
+      <div id="recommendedRecipe"></div>
     </section>
   </main>
+
+  <div id="recipeModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeRecipe()">&times;</span>
+      <h2 id="modalTitle" style="margin-bottom: 0.5rem; color: #374151;"></h2>
+      <div id="modalCalBadge" style="background: #f0fdf4; color: #166534; display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; margin-bottom: 1.5rem;"></div>
+      
+      <h4 style="margin-bottom: 0.75rem; border-left: 4px solid #7FB77E; padding-left: 0.5rem;">Bahan & Takaran</h4>
+      <div id="modalIngredients"></div>
+
+      <h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; border-left: 4px solid #7FB77E; padding-left: 0.5rem;">Cara Memasak</h4>
+      <ol id="modalSteps" class="step-list"></ol>
+
+      <button onclick="closeRecipe()" class="btn-primary" style="margin-top: 2rem;">Selesai Memasak</button>
+    </div>
+  </div>
 
   <footer>
     <p>© 2026 Michelle Nathanael • MealPrep</p>
   </footer>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then(() => console.log('SW registered!'))
-        .catch(err => console.error('SW gagal:', err));
-    }
+    const recipeLibrary = [
+      {
+        keyword: "Ayam",
+        name: "Tumis Ayam Mentega",
+        cal: 450,
+        img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&q=60",
+        desc: "Protein tinggi menggunakan stok Dada Ayam Anda.",
+        ingredients: [
+          { item: "Dada Ayam Fillet", qty: "200 gram" },
+          { item: "Mentega", qty: "2 sdm" },
+          { item: "Bawang Bombay", qty: "1/4 buah" },
+          { item: "Kecap Manis", qty: "1 sdm" }
+        ],
+        steps: [
+          "Potong ayam dadu, tumis bawang dengan mentega.",
+          "Masukkan ayam hingga matang kecokelatan.",
+          "Tambahkan bumbu, aduk rata dan sajikan."
+        ]
+      },
+      {
+        keyword: "Susu",
+        name: "Creamy Oatmeal",
+        cal: 280,
+        img: "https://images.unsplash.com/photo-1517673132405-a56a62b18acc?w=400&q=60",
+        desc: "Manfaatkan Susu UHT H-2 Anda untuk sarapan sehat.",
+        ingredients: [
+          { item: "Susu UHT", qty: "250 ml" },
+          { item: "Oatmeal", qty: "5 sdm" },
+          { item: "Madu", qty: "1 sdm" }
+        ],
+        steps: [
+          "Masak susu dan oatmeal hingga mengental.",
+          "Tuang ke mangkuk, tambahkan madu.",
+          "Sajikan selagi hangat."
+        ]
+      }
+    ];
 
-    function checkExpiredNotification() {
-      if (Notification.permission === "granted") {
-        console.log("Notifikasi aktif.");
-      } else if (Notification.permission !== "denied") {
-        Notification.requestPermission();
+    function suggestRecipe() {
+      const inventory = document.getElementById('inventoryList').innerText;
+      const display = document.getElementById('recommendedRecipe');
+      const match = recipeLibrary.find(r => inventory.includes(r.keyword));
+
+      if (match) {
+        display.innerHTML = `
+          <div class="recipe-card">
+            <img src="${match.img}" class="recipe-img">
+            <div class="recipe-info">
+              <div class="recipe-header">
+                <h3>${match.name}</h3>
+                <div class="recipe-cal"><span>${match.cal}</span><small>kkal</small></div>
+              </div>
+              <p class="text-xs" style="margin: 0.5rem 0 1rem 0;">${match.desc}</p>
+              <button onclick="openRecipe('${match.keyword}')" class="btn-primary" style="font-size: 0.875rem;">Lihat Cara Memasak</button>
+            </div>
+          </div>`;
       }
     }
 
-    window.onload = checkExpiredNotification;
+    function openRecipe(key) {
+      const r = recipeLibrary.find(x => x.keyword === key);
+      document.getElementById('modalTitle').innerText = r.name;
+      document.getElementById('modalCalBadge').innerText = r.cal + " kkal";
+      document.getElementById('modalIngredients').innerHTML = r.ingredients.map(i => `<div class="ingredient-row"><span>${i.item}</span><span style="font-weight:700; color:#7FB77E;">${i.qty}</span></div>`).join('');
+      document.getElementById('modalSteps').innerHTML = r.steps.map(s => `<li>${s}</li>`).join('');
+      document.getElementById('recipeModal').style.display = 'flex';
+    }
 
-    document.getElementById('scanBill').addEventListener('change', function(e) {
-      if(this.files && this.files[0]) {
-        alert("Gambar struk berhasil diambil. Sedang memproses...");
-      }
-    });
+    function closeRecipe() { document.getElementById('recipeModal').style.display = 'none'; }
+
+    window.onload = suggestRecipe;
+    window.onclick = (e) => { if(e.target == document.getElementById('recipeModal')) closeRecipe(); };
   </script>
 </body>
 </html>
