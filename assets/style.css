@@ -1,5 +1,5 @@
 :root {
-  --primary: #4F46E5;
+  --primary: #79AE6F;
   --bg: #f9fafb;
   --text: #1f2937;
 }
@@ -45,7 +45,7 @@ body {
 }
 
 button {
-  background: var(--primary);
+  background: #9FCB98;
   border: none;
   color: white;
   padding: 0.75rem 1.25rem;
