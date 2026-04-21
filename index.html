@@ -519,7 +519,43 @@
     }
 
     function closeRecipe() { document.getElementById('recipeModal').style.display = 'none'; }
+document.getElementById('scanBill').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
 
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const imgUrl = event.target.result;
+
+    // Tampilkan preview gambar + pesan loading
+    const inventoryList = document.getElementById('inventoryList');
+    inventoryList.innerHTML = `
+      <div style="text-align:center; padding: 1rem;">
+        <img src="${imgUrl}" style="width:100%; border-radius:0.75rem; margin-bottom:1rem;">
+        <p style="color:#7FB77E; font-weight:600;">⏳ Memproses struk...</p>
+      </div>
+    `;
+
+    // Simulasi hasil scan (ganti dengan AI/OCR jika ada)
+    setTimeout(() => {
+      inventoryList.innerHTML = `
+        <div class="inventory-item item-safe">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <span style="font-size:1.5rem;">🛒</span>
+            <div>
+              <p style="font-size:0.875rem; font-weight:500;">Item dari Struk</p>
+              <p class="text-xs">Berhasil discan!</p>
+            </div>
+          </div>
+          <span style="color:#10B981; font-size:0.75rem; font-weight:600;">✅ Baru</span>
+        </div>
+      `;
+      suggestRecipe();
+    }, 2000);
+  };
+
+  reader.readAsDataURL(file);
+});
     window.onload = suggestRecipe;
     window.onclick = (e) => { if(e.target == document.getElementById('recipeModal')) closeRecipe(); };
 
