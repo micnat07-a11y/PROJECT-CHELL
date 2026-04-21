@@ -50,16 +50,9 @@
       {
       "src": "https://micnat07-a11y.github.io/PROJECT-CHELL/icons/screenshot-narrow.png",
       "sizes": "1080x1920",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Beranda MealPrep"
-    },
-    {
-      "src": "icons/screenshot-wide.png",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "MealPrep Desktop View"
     }
   ],
   "shortcuts": [
