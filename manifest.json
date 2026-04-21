@@ -24,7 +24,14 @@
     "sizes": "512x512",
     "type": "image/png",
     "purpose": "any"
-  },
+  }
+],
+     "screenshots": [
+    {
+      "src": "icons/screenshot-narrow.png",
+      "sizes": "2160x3840",
+      "type": "image/png"
+    },
   {
     "src": "icons/logo-maskable-512x512.png",
     "sizes": "512x512",
