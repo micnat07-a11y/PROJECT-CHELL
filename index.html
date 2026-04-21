@@ -511,5 +511,18 @@
       document.getElementById('headerWelcome').innerText = "Halo, " + user + "! Siap masak apa hari ini?";
     });
   </script>
+  <script>
+  // Registrasi Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      // Pastikan path sw.js benar sesuai struktur repo
+      navigator.serviceWorker.register('/PROJECT-CHELL/sw.js')
+        .then(reg => console.log('PWA: Service Worker Aktif', reg))
+        .catch(err => console.log('PWA: Service Worker Gagal', err));
+    });
+  }
+
+  // --- Kode login dan resep Anda tetap di sini ---
+</script>
 </body>
 </html>
