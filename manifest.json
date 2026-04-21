@@ -53,13 +53,6 @@
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Beranda MealPrep"
-    },
-    {
-      "src": "icons/screenshot-wide.png",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "MealPrep Desktop View"
     }
   ],
   "shortcuts": [
