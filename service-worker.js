@@ -7,27 +7,22 @@ const urlsToCache = [
   "/PROJECT-CHELL/icons/logo-192x192.png"
 ];
 
-// ✅ TAMBAH: Install
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
-  self.skipWaiting(); // ← langsung aktif tanpa nunggu tab lama ditutup
+  self.skipWaiting();
 });
 
-// ✅ TAMBAH: Activate — bersihin cache lama otomatis
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-      )
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     )
   );
-  self.clients.claim(); // ← langsung kontrol semua tab
+  self.clients.claim();
 });
 
-// ✅ Fetch sudah benar, tidak perlu diubah
 self.addEventListener("fetch", event => {
   event.respondWith(
     caches.match(event.request).then(response => {
