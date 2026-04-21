@@ -6,39 +6,62 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "background_color": "#7FB77E",
   "theme_color": "#7FB77E",
   "orientation": "portrait",
   "lang": "id",
   "dir": "ltr",
   "categories": ["food", "health", "lifestyle"],
-  "icons": [
-  {
-    "src": "icons/logo-192x192.png",
-    "sizes": "192x192",
-    "type": "image/png",
-    "purpose": "any"
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
   },
-  {
-    "src": "icons/logo-512x512.png",
-    "sizes": "512x512",
-    "type": "image/png",
-    "purpose": "any"
-  }
-],
-     "screenshots": [
+  "share_target": {
+    "action": "./",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "icons": [
+    {
+      "src": "icons/logo-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/logo-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/logo-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
     {
       "src": "icons/screenshot-narrow.png",
-      "sizes": "2160x3840",
-      "type": "image/png"
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Beranda MealPrep"
     },
-  {
-    "src": "icons/logo-maskable-512x512.png",
-    "sizes": "512x512",
-    "type": "image/png",
-    "purpose": "maskable"
-  }
-],
+    {
+      "src": "icons/screenshot-wide.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "MealPrep Desktop View"
+    }
+  ],
   "shortcuts": [
     {
       "name": "Buka Beranda",
