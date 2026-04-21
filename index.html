@@ -245,16 +245,96 @@
       font-size: 0.75rem;
       color: #9ca3af;
     }
+
+    /* ----- CSS TAMBAHAN UNTUK LOGIN (TIDAK MENGHAPUS YANG LAMA) ----- */
+    #loginOverlay {
+      position: fixed;
+      inset: 0;
+      background: #7FB77E;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .login-card {
+      background: white;
+      width: 100%;
+      max-width: 24rem;
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-card h2 {
+      font-family: 'Pacifico', cursive;
+      color: #7FB77E;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: #374151;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: #7FB77E;
+    }
   </style>
 </head>
 
 <body>
 
+  <div id="loginOverlay">
+    <div class="login-card">
+      <h2>MealPrep</h2>
+      <p style="text-align: center; font-size: 0.875rem; color: #6b7280; margin-bottom: 1.5rem;">Daftar Akun Baru</p>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label>NAMA EMAIL</label>
+          <input type="email" id="emailName" placeholder="nama@email.com" required>
+        </div>
+        <div class="form-group">
+          <label>PASSWORD EMAIL</label>
+          <input type="password" id="emailPass" placeholder="••••••••" required>
+        </div>
+        <hr style="margin: 1rem 0; border: 0; border-top: 1px solid #eee;">
+        <div class="form-group">
+          <label>NAMA AKUN</label>
+          <input type="text" id="accName" placeholder="Username" required>
+        </div>
+        <div class="form-group">
+          <label>PASSWORD AKUN</label>
+          <input type="password" id="accPass" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-primary">Masuk ke Aplikasi</button>
+      </form>
+    </div>
+  </div>
+
   <header>
     <div class="header-content">
       <div>
         <h1>MealPrep</h1>
-        <p>Hemat bahan • Resep Sehat • Notifikasi</p>
+        <p id="headerWelcome">Hemat bahan • Resep Sehat • Notifikasi</p>
       </div>
       <div class="notif-icon">
         <span class="notif-badge">2</span>
@@ -362,6 +442,7 @@
   </footer>
 
   <script>
+    // KODE ASLI JAVASCRIPT ANDA
     const recipeLibrary = [
       {
         keyword: "Ayam",
@@ -393,7 +474,7 @@
           { item: "Madu", qty: "1 sdm" }
         ],
         steps: [
-          "Masak susu dan oatmeal hingga mengental.",
+          "Masak susu and oatmeal hingga mengental.",
           "Tuang ke mangkuk, tambahkan madu.",
           "Sajikan selagi hangat."
         ]
@@ -434,6 +515,20 @@
 
     window.onload = suggestRecipe;
     window.onclick = (e) => { if(e.target == document.getElementById('recipeModal')) closeRecipe(); };
+
+    // ----- LOGIKA TAMBAHAN UNTUK LOGIN -----
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const user = document.getElementById('accName').value;
+      
+      // Sembunyikan layar login
+      document.getElementById('loginOverlay').style.display = 'none';
+      
+      // Update sapaan di header
+      document.getElementById('headerWelcome').innerText = "Halo, " + user + "! Siap masak apa hari ini?";
+      
+      alert("Selamat Datang, " + user + "!");
+    });
   </script>
 </body>
 </html>
