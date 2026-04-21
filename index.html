@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -34,7 +33,6 @@
       user-select: none;
     }
 
-    /* Layout Container */
     main {
       flex-grow: 1;
       padding: 1rem;
@@ -43,7 +41,6 @@
       width: 100%;
     }
 
-    /* Header Design */
     header {
       background-color: #7FB77E;
       color: white;
@@ -64,7 +61,6 @@
       align-items: center;
     }
 
-    /* Update Font MealPrep ke Pacifico */
     header h1 {
       font-family: 'Pacifico', cursive;
       font-size: 1.8rem;
@@ -78,10 +74,7 @@
       opacity: 0.9;
     }
 
-    .notif-icon {
-      position: relative;
-    }
-
+    .notif-icon { position: relative; }
     .notif-badge {
       position: absolute;
       top: -0.25rem;
@@ -97,7 +90,6 @@
       font-weight: 700;
     }
 
-    /* Card Component */
     .card {
       background: white;
       padding: 1.5rem;
@@ -125,7 +117,6 @@
     .icon-green { background-color: #f0fdf4; color: #7FB77E; }
     .icon-amber { background-color: #fffbeb; color: #f59e0b; }
 
-    /* Buttons */
     .btn-primary {
       width: 100%;
       background-color: #7FB77E;
@@ -144,7 +135,6 @@
 
     .btn-primary:active { transform: scale(0.98); }
 
-    /* Inventory Items & H-2 Reminder */
     .inventory-item {
       display: flex;
       justify-content: space-between;
@@ -173,7 +163,6 @@
       50% { opacity: 0.7; }
     }
 
-    /* Recipe Section */
     .recipe-card {
       background-color: #f9fafb;
       border-radius: 0.75rem;
@@ -188,7 +177,6 @@
     .recipe-cal span { font-size: 1.25rem; }
     .recipe-cal small { display: block; font-size: 0.75rem; color: #6b7280; }
 
-    /* Modal Resep & Takaran */
     .modal {
       display: none;
       position: fixed;
@@ -231,7 +219,6 @@
     .step-list { margin-top: 1rem; padding-left: 1.25rem; font-size: 0.875rem; }
     .step-list li { margin-bottom: 0.5rem; }
 
-    /* Utility */
     .hidden { display: none; }
     .text-sm { font-size: 0.875rem; color: #4b5563; }
     .text-xs { font-size: 0.75rem; color: #6b7280; }
@@ -246,7 +233,6 @@
       color: #9ca3af;
     }
 
-    /* ----- CSS TAMBAHAN UNTUK LOGIN (TIDAK MENGHAPUS YANG LAMA) ----- */
     #loginOverlay {
       position: fixed;
       inset: 0;
@@ -274,10 +260,7 @@
       margin-bottom: 1rem;
     }
 
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
+    .form-group { margin-bottom: 1rem; }
     .form-group label {
       display: block;
       font-size: 0.75rem;
@@ -294,9 +277,7 @@
       outline: none;
     }
 
-    .form-group input:focus {
-      border-color: #7FB77E;
-    }
+    .form-group input:focus { border-color: #7FB77E; }
   </style>
 </head>
 
@@ -306,7 +287,6 @@
     <div class="login-card">
       <h2>MealPrep</h2>
       <p style="text-align: center; font-size: 0.875rem; color: #6b7280; margin-bottom: 1.5rem;">Daftar Akun Baru</p>
-      
       <form id="loginForm">
         <div class="form-group">
           <label>NAMA EMAIL</label>
@@ -442,7 +422,15 @@
   </footer>
 
   <script>
-    // KODE ASLI JAVASCRIPT ANDA
+    // 1. Registrasi Service Worker untuk Skor PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('SW terdaftar!', reg))
+          .catch(err => console.error('SW gagal!', err));
+      });
+    }
+
     const recipeLibrary = [
       {
         keyword: "Ayam",
@@ -516,18 +504,11 @@
     window.onload = suggestRecipe;
     window.onclick = (e) => { if(e.target == document.getElementById('recipeModal')) closeRecipe(); };
 
-    // ----- LOGIKA TAMBAHAN UNTUK LOGIN -----
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const user = document.getElementById('accName').value;
-      
-      // Sembunyikan layar login
       document.getElementById('loginOverlay').style.display = 'none';
-      
-      // Update sapaan di header
       document.getElementById('headerWelcome').innerText = "Halo, " + user + "! Siap masak apa hari ini?";
-      
-      alert("Selamat Datang, " + user + "!");
     });
   </script>
 </body>
