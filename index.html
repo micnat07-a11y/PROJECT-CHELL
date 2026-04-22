@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MealPrep - PWA</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-  
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+l="stylesheet">
 
   <style>
     /* Reset & Base Styles */
@@ -130,8 +120,7 @@
       transition: background 0.2s, transform 0.1s;
     }
 
-    .btn-primary:disabled { background-color: #9ca3af; cursor: not-allowed; }
-    .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+    .btn-primary:active { transform: scale(0.98); }
 
     .inventory-item {
       display: flex;
@@ -153,6 +142,12 @@
       font-size: 0.75rem;
       border-radius: 9999px;
       font-weight: 700;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
     }
 
     .recipe-card {
@@ -268,6 +263,8 @@
       border-radius: 0.5rem;
       outline: none;
     }
+
+    .form-group input:focus { border-color: #7FB77E; }
   </style>
 </head>
 
@@ -331,7 +328,7 @@
       </div>
       <p class="text-sm" style="margin-bottom: 1.25rem;">Pindai struk untuk mencatat inventori & kadaluarsa otomatis.</p>
       <input type="file" id="scanBill" accept="image/*" capture="environment" class="hidden">
-      <button id="btnScan" onclick="document.getElementById('scanBill').click()" class="btn-primary">
+      <button onclick="document.getElementById('scanBill').click()" class="btn-primary">
         Ambil Foto Struk
       </button>
     </section>
@@ -362,6 +359,17 @@
           </div>
           <span class="badge-danger">⚠️ 2 Hari!</span>
         </div>
+
+        <div class="inventory-item item-safe">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.5rem;">🍗</span>
+            <div>
+              <p style="font-size: 0.875rem; font-weight: 500;">Dada Ayam Fillet</p>
+              <p class="text-xs">Exp: 20 Apr 2026</p>
+            </div>
+          </div>
+          <span style="color: #10B981; font-size: 0.75rem; font-weight: 600;">Aman</span>
+        </div>
       </div>
     </section>
 
@@ -385,10 +393,13 @@
       <span class="close-modal" onclick="closeRecipe()">&times;</span>
       <h2 id="modalTitle" style="margin-bottom: 0.5rem; color: #374151;"></h2>
       <div id="modalCalBadge" style="background: #f0fdf4; color: #166534; display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; margin-bottom: 1.5rem;"></div>
+      
       <h4 style="margin-bottom: 0.75rem; border-left: 4px solid #7FB77E; padding-left: 0.5rem;">Bahan & Takaran</h4>
       <div id="modalIngredients"></div>
+
       <h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; border-left: 4px solid #7FB77E; padding-left: 0.5rem;">Cara Memasak</h4>
       <ol id="modalSteps" class="step-list"></ol>
+
       <button onclick="closeRecipe()" class="btn-primary" style="margin-top: 2rem;">Selesai Memasak</button>
     </div>
   </div>
@@ -398,10 +409,12 @@
   </footer>
 
   <script>
-    // 1. Registrasi Service Worker
+    // 1. Registrasi Service Worker untuk Skor PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('SW terdaftar!', reg))
+          .catch(err => console.error('SW gagal!', err));
       });
     }
 
@@ -415,79 +428,33 @@
         ingredients: [
           { item: "Dada Ayam Fillet", qty: "200 gram" },
           { item: "Mentega", qty: "2 sdm" },
-          { item: "Bawang Bombay", qty: "1/4 buah" }
+          { item: "Bawang Bombay", qty: "1/4 buah" },
+          { item: "Kecap Manis", qty: "1 sdm" }
         ],
-        steps: ["Potong ayam dadu, tumis dengan mentega.", "Masukkan bumbu.", "Sajikan."]
+        steps: [
+          "Potong ayam dadu, tumis bawang dengan mentega.",
+          "Masukkan ayam hingga matang kecokelatan.",
+          "Tambahkan bumbu, aduk rata dan sajikan."
+        ]
       },
       {
         keyword: "Susu",
         name: "Creamy Oatmeal",
         cal: 280,
         img: "https://images.unsplash.com/photo-1517673132405-a56a62b18acc?w=400&q=60",
-        desc: "Manfaatkan Susu UHT untuk sarapan sehat.",
+        desc: "Manfaatkan Susu UHT H-2 Anda untuk sarapan sehat.",
         ingredients: [
           { item: "Susu UHT", qty: "250 ml" },
-          { item: "Oatmeal", qty: "5 sdm" }
+          { item: "Oatmeal", qty: "5 sdm" },
+          { item: "Madu", qty: "1 sdm" }
         ],
-        steps: ["Masak susu dan oat hingga kental.", "Sajikan hangat."]
+        steps: [
+          "Masak susu and oatmeal hingga mengental.",
+          "Tuang ke mangkuk, tambahkan madu.",
+          "Sajikan selagi hangat."
+        ]
       }
     ];
-
-    // Logika OCR Struk
-    document.getElementById("scanBill").addEventListener("change", function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const btn = document.getElementById('btnScan');
-      btn.innerText = "⏳ Membaca Struk...";
-      btn.disabled = true;
-
-      Tesseract.recognize(file, 'ind').then(({ data: { text } }) => {
-        console.log("Hasil Scan:", text);
-        const lines = text.split('\n');
-        let found = false;
-
-        lines.forEach(line => {
-          recipeLibrary.forEach(recipe => {
-            if (line.toLowerCase().includes(recipe.keyword.toLowerCase())) {
-              const expire = new Date();
-              expire.setDate(expire.getDate() + 7);
-              
-              addToInventory({
-                name: line.trim().substring(0, 20) || recipe.keyword,
-                exp: expire.toLocaleDateString('id-ID'),
-                icon: recipe.keyword === "Ayam" ? "🍗" : "🥛",
-                status: "safe"
-              });
-              found = true;
-            }
-          });
-        });
-
-        if(!found) alert("Item tidak terdeteksi, coba foto lebih dekat.");
-        
-        btn.innerText = "Ambil Foto Struk";
-        btn.disabled = false;
-        suggestRecipe();
-      });
-    });
-
-    function addToInventory(item) {
-      const container = document.getElementById("inventoryList");
-      const el = document.createElement("div");
-      el.className = "inventory-item " + (item.status === "exp" ? "item-exp" : "item-safe");
-      el.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-          <span style="font-size: 1.5rem;">${item.icon}</span>
-          <div>
-            <p style="font-size: 0.875rem; font-weight: 500;">${item.name}</p>
-            <p class="text-xs">Exp: ${item.exp}</p>
-          </div>
-        </div>
-        <span class="badge-danger" style="background:#10B981">Baru</span>
-      `;
-      container.prepend(el);
-    }
 
     function suggestRecipe() {
       const inventory = document.getElementById('inventoryList').innerText;
@@ -499,7 +466,10 @@
           <div class="recipe-card">
             <img src="${match.img}" class="recipe-img">
             <div class="recipe-info">
-              <div class="recipe-header"><h3>${match.name}</h3><div class="recipe-cal"><span>${match.cal}</span><small>kkal</small></div></div>
+              <div class="recipe-header">
+                <h3>${match.name}</h3>
+                <div class="recipe-cal"><span>${match.cal}</span><small>kkal</small></div>
+              </div>
               <p class="text-xs" style="margin: 0.5rem 0 1rem 0;">${match.desc}</p>
               <button onclick="openRecipe('${match.keyword}')" class="btn-primary" style="font-size: 0.875rem;">Lihat Cara Memasak</button>
             </div>
@@ -518,14 +488,49 @@
 
     function closeRecipe() { document.getElementById('recipeModal').style.display = 'none'; }
 
+    window.onload = suggestRecipe;
+    window.onclick = (e) => { if(e.target == document.getElementById('recipeModal')) closeRecipe(); };
+
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      const user = document.getElementById('accName').value;
       document.getElementById('loginOverlay').style.display = 'none';
-      document.getElementById('headerWelcome').innerText = "Halo, " + document.getElementById('accName').value + "!";
-      suggestRecipe();
-    });
+      document.getElementById('headerWelcome').innerText = "Halo, " + user + "! Siap masak apa hari ini?";
+      // 🔥 TAMBAHKAN INI
+document.getElementById("scanBill").addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    window.onclick = (e) => { if(e.target == document.getElementById('recipeModal')) closeRecipe(); };
+  // simulasi hasil scan
+  const newItem = {
+    name: "Susu UHT Full Cream",
+    exp: "2026-04-25",
+    status: "exp"
+  };
+
+  addToInventory(newItem);
+});
+
+function addToInventory(item) {
+  const container = document.getElementById("inventoryList");
+
+  const el = document.createElement("div");
+  el.className = "inventory-item " + (item.status === "exp" ? "item-exp" : "item-safe");
+
+  el.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <span style="font-size: 1.5rem;">🥛</span>
+      <div>
+        <p style="font-size: 0.875rem; font-weight: 500;">${item.name}</p>
+        <p class="text-xs">Exp: ${item.exp}</p>
+      </div>
+    </div>
+    <span class="badge-danger">Baru</span>
+  `;
+
+  container.prepend(el);
+}
+    });
   </script>
 </body>
 </html>
