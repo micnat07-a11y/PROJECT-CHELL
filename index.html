@@ -266,7 +266,6 @@ l="stylesheet">
 
     .form-group input:focus { border-color: #7FB77E; }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 
 <body>
@@ -488,23 +487,7 @@ l="stylesheet">
     }
 
     function closeRecipe() { document.getElementById('recipeModal').style.display = 'none'; }
-function processReceipt(text) {
-  const lines = text.split("\n");
-  
-  lines.forEach(line => {
-    line = line.trim();
 
-    if (line.length > 3 && !line.match(/[0-9]{3,}/)) {
-      const item = {
-        name: line,
-        exp: generateExpDate(),
-        status: "safe"
-      };
-
-      addToInventory(item);
-    }
-  });
-}
     window.onload = suggestRecipe;
     window.onclick = (e) => { if(e.target == document.getElementById('recipeModal')) closeRecipe(); };
 
@@ -514,22 +497,18 @@ function processReceipt(text) {
       document.getElementById('loginOverlay').style.display = 'none';
       document.getElementById('headerWelcome').innerText = "Halo, " + user + "! Siap masak apa hari ini?";
       // 🔥 TAMBAHKAN INI
-document.getElementById("scanBill").addEventListener("change", async function(e) {
+document.getElementById("scanBill").addEventListener("change", function(e) {
   const file = e.target.files[0];
   if (!file) return;
 
-  alert("Sedang scan struk...");
+  // simulasi hasil scan
+  const newItem = {
+    name: "Susu UHT Full Cream",
+    exp: "2026-04-25",
+    status: "exp"
+  };
 
-  const result = await Tesseract.recognize(
-    file,
-    'ind+eng',
-    { logger: m => console.log(m) }
-  );
-
-  const text = result.data.text;
-  console.log("HASIL OCR:", text);
-
-  processReceipt(text);
+  addToInventory(newItem);
 });
 
 function addToInventory(item) {
