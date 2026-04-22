@@ -1,4 +1,12 @@
-l="stylesheet">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MealPrep - PWA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
   <style>
     /* Reset & Base Styles */
@@ -404,12 +412,25 @@ l="stylesheet">
     </div>
   </div>
 
+  <div id="scanResultModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeScanModal()">&times;</span>
+      <h2 style="margin-bottom: 1rem; color: #374151;">Hasil Scan Struk</h2>
+      <p class="text-sm" style="margin-bottom: 1rem;">Bahan yang terdeteksi secara otomatis:</p>
+      
+      <div id="scanItemsList" style="margin-bottom: 1.5rem;">
+        </div>
+
+      <button onclick="confirmScanResults()" class="btn-primary">Konfirmasi & Simpan</button>
+    </div>
+  </div>
+
   <footer>
     <p>© 2026 Michelle Nathanael • MealPrep</p>
   </footer>
 
   <script>
-    // 1. Registrasi Service Worker untuk Skor PWA
+    // 1. Registrasi Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -418,6 +439,7 @@ l="stylesheet">
       });
     }
 
+    // 2. Data Master Resep
     const recipeLibrary = [
       {
         keyword: "Ayam",
@@ -449,17 +471,26 @@ l="stylesheet">
           { item: "Madu", qty: "1 sdm" }
         ],
         steps: [
-          "Masak susu and oatmeal hingga mengental.",
+          "Masak susu dan oatmeal hingga mengental.",
           "Tuang ke mangkuk, tambahkan madu.",
           "Sajikan selagi hangat."
         ]
       }
     ];
 
+    // 3. Simulasi Data OCR Struk
+    const dummyScanResults = [
+      { name: "Telur Ayam", icon: "🥚", exp: "2026-05-10", status: "safe" },
+      { name: "Bayam Hijau", icon: "🥬", exp: "2026-04-25", status: "exp" },
+      { name: "Yogurt Blueberry", icon: "🥣", exp: "2026-05-01", status: "safe" }
+    ];
+
+    // --- FUNGSI UTAMA ---
+
     function suggestRecipe() {
       const inventory = document.getElementById('inventoryList').innerText;
       const display = document.getElementById('recommendedRecipe');
-      const match = recipeLibrary.find(r => inventory.includes(r.keyword));
+      const match = recipeLibrary.find(r => inventory.toLowerCase().includes(r.keyword.toLowerCase()));
 
       if (match) {
         display.innerHTML = `
@@ -474,6 +505,8 @@ l="stylesheet">
               <button onclick="openRecipe('${match.keyword}')" class="btn-primary" style="font-size: 0.875rem;">Lihat Cara Memasak</button>
             </div>
           </div>`;
+      } else {
+        display.innerHTML = `<p class="text-xs" style="text-align:center; padding:1rem;">Belum ada resep yang cocok dengan bahan di kulkas.</p>`;
       }
     }
 
@@ -488,49 +521,81 @@ l="stylesheet">
 
     function closeRecipe() { document.getElementById('recipeModal').style.display = 'none'; }
 
-    window.onload = suggestRecipe;
-    window.onclick = (e) => { if(e.target == document.getElementById('recipeModal')) closeRecipe(); };
+    // --- LOGIKA SCAN STRUK ---
+
+    document.getElementById("scanBill").addEventListener("change", function(e) {
+      if (!e.target.files[0]) return;
+      
+      // Simulasi proses loading scan
+      const listContainer = document.getElementById("scanItemsList");
+      listContainer.innerHTML = "<p class='text-sm'>Memproses struk...</p>";
+      document.getElementById('scanResultModal').style.display = 'flex';
+
+      setTimeout(() => {
+        renderScanResults(dummyScanResults);
+      }, 1500);
+    });
+
+    function renderScanResults(items) {
+      const listContainer = document.getElementById("scanItemsList");
+      listContainer.innerHTML = items.map(item => `
+        <div class="inventory-item item-safe" style="margin-top:0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.25rem;">${item.icon}</span>
+            <div>
+              <p style="font-size: 0.875rem; font-weight: 600;">${item.name}</p>
+              <p class="text-xs">Kadaluarsa: ${item.exp}</p>
+            </div>
+          </div>
+          <input type="checkbox" checked style="accent-color: #7FB77E;">
+        </div>
+      `).join('');
+    }
+
+    function confirmScanResults() {
+      dummyScanResults.forEach(item => addToInventory(item));
+      closeScanModal();
+      suggestRecipe(); // Update rekomendasi resep
+    }
+
+    function closeScanModal() {
+      document.getElementById('scanResultModal').style.display = 'none';
+    }
+
+    function addToInventory(item) {
+      const container = document.getElementById("inventoryList");
+      const el = document.createElement("div");
+      el.className = "inventory-item " + (item.status === "exp" ? "item-exp" : "item-safe");
+
+      el.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <span style="font-size: 1.5rem;">${item.icon || '📦'}</span>
+          <div>
+            <p style="font-size: 0.875rem; font-weight: 500;">${item.name}</p>
+            <p class="text-xs">Exp: ${item.exp}</p>
+          </div>
+        </div>
+        ${item.status === "exp" ? '<span class="badge-danger">Baru</span>' : '<span style="color: #10B981; font-size: 0.75rem; font-weight: 600;">Simpan</span>'}
+      `;
+      container.prepend(el);
+    }
+
+    // --- LOGIN & INIT ---
 
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const user = document.getElementById('accName').value;
       document.getElementById('loginOverlay').style.display = 'none';
       document.getElementById('headerWelcome').innerText = "Halo, " + user + "! Siap masak apa hari ini?";
-      // 🔥 TAMBAHKAN INI
-document.getElementById("scanBill").addEventListener("change", function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  // simulasi hasil scan
-  const newItem = {
-    name: "Susu UHT Full Cream",
-    exp: "2026-04-25",
-    status: "exp"
-  };
-
-  addToInventory(newItem);
-});
-
-function addToInventory(item) {
-  const container = document.getElementById("inventoryList");
-
-  const el = document.createElement("div");
-  el.className = "inventory-item " + (item.status === "exp" ? "item-exp" : "item-safe");
-
-  el.innerHTML = `
-    <div style="display: flex; align-items: center; gap: 0.75rem;">
-      <span style="font-size: 1.5rem;">🥛</span>
-      <div>
-        <p style="font-size: 0.875rem; font-weight: 500;">${item.name}</p>
-        <p class="text-xs">Exp: ${item.exp}</p>
-      </div>
-    </div>
-    <span class="badge-danger">Baru</span>
-  `;
-
-  container.prepend(el);
-}
     });
+
+    window.onload = suggestRecipe;
+    window.onclick = (e) => { 
+      if(e.target.className === 'modal') {
+        closeRecipe();
+        closeScanModal();
+      }
+    };
   </script>
 </body>
 </html>
