@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MealPrep</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #F4F6F4;
+  margin: 0;
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #5BAD6F;
+  color: white;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>📸 Scan Struk</h2>
+
+<input type="file" id="fileInput" accept="image/*">
+<button onclick="scanStruk()">Scan Struk</button>
+
+<div id="result"></div>
+
+<h2>🧊 Isi Kulkas</h2>
+<div id="kulkas"></div>
+
+<h2>🍳 Rekomendasi Masakan</h2>
+<div id="resep"></div>
+
+</div>
+
+<script>
+let items = [];
+
+async function scanStruk() {
+  const file = document.getElementById("fileInput").files[0];
+  if (!file) return alert("Pilih gambar dulu");
+
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64 = e.target.result.split(",")[1];
+
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: "Extract grocery items. Return JSON {items:[{nama:'',qty:1}]}",
+        messages: [{
+          role: "user",
+          content: [
+            {
+              type: "image",
+              source: {
+                type: "base64",
+                media_type: "image/jpeg",
+                data: base64
+              }
+            }
+          ]
+        }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content[0].text;
+
+    const parsed = JSON.parse(text);
+
+    items = parsed.items;
+
+    tampilkanKulkas();
+    generateResep();
+
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function tampilkanKulkas() {
+  const el = document.getElementById("kulkas");
+  el.innerHTML = "";
+
+  items.forEach(i => {
+    el.innerHTML += `<div class="card">🛒 ${i.nama} (${i.qty})</div>`;
+  });
+}
+
+async function generateResep() {
+  const bahan = items.map(i => i.nama).join(", ");
+
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      system: "Buat 2 resep dari bahan. JSON {masakan:[{nama:''}]}",
+      messages: [{
+        role: "user",
+        content: "Bahan: " + bahan
+      }]
+    })
+  });
+
+  const data = await res.json();
+  const parsed = JSON.parse(data.content[0].text);
+
+  const el = document.getElementById("resep");
+  el.innerHTML = "";
+
+  parsed.masakan.forEach(m => {
+    el.innerHTML += `<div class="card">🍳 ${m.nama}</div>`;
+  });
+}
+</script>
+
+</body>
+</html>
