@@ -41,6 +41,12 @@
     
     .hidden { display: none !important; }
     input[type="text"] { width: 100%; padding: 0.8rem; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 0.5rem; outline: none; }
+    input[type="text"]:focus { border-color: #7FB77E; }
+
+    /* Search Box styling */
+    .search-box { display: flex; gap: 5px; margin-bottom: 10px; }
+    .search-box input { margin-bottom: 0; flex: 1; }
+    .search-box button { margin-top: 0; width: auto; padding: 0 15px; }
   </style>
 </head>
 <body>
@@ -67,11 +73,21 @@
     <p id="statusOCR" style="font-size:0.7rem; color:#7FB77E; margin-top:0.5rem; text-align:center; font-weight: bold;"></p>
   </section>
 
+  <section class="card">
+    <h3 style="margin-bottom: 0.5rem;">🔍 Cari Inspirasi Masak</h3>
+    <p style="font-size:0.8rem; color:#666; margin-bottom:0.8rem;">Ketik bahan yang kamu punya (Ayam, Telur, dll):</p>
+    <div class="search-box">
+      <input type="text" id="manualSearchInput" placeholder="Contoh: Ayam">
+      <button class="btn-primary" onclick="handleManualSearch()">Cari</button>
+    </div>
+    <div id="manualSearchList"></div>
+  </section>
+
   <section class="card" id="recipeSection">
-    <h3 style="margin-bottom: 0.5rem;">🍳 Rekomendasi Masakan</h3>
-    <p style="font-size:0.8rem; color:#666; margin-bottom:0.5rem;">Berdasarkan bahan di kulkas kamu:</p>
+    <h3 style="margin-bottom: 0.5rem;">🍳 Rekomendasi Masakan (Scan)</h3>
+    <p style="font-size:0.8rem; color:#666; margin-bottom:0.5rem;">Berdasarkan hasil scan struk:</p>
     <div id="recipeList">
-       <p style="font-size: 0.8rem; color: #999; text-align: center;">Scan struk dulu untuk lihat resep.</p>
+       <p style="font-size: 0.8rem; color: #999; text-align: center;">Scan struk dulu untuk lihat resep otomatis.</p>
     </div>
   </section>
 
@@ -120,6 +136,32 @@
     }
   }
 
+  // FUNGSI BARU: PENCARIAN MANUAL
+  function handleManualSearch() {
+    const input = document.getElementById('manualSearchInput').value.toUpperCase();
+    const container = document.getElementById('manualSearchList');
+    container.innerHTML = ""; // Bersihkan list sebelumnya
+
+    if (!input) {
+      alert("Masukkan bahan masakan dulu!");
+      return;
+    }
+
+    // Mencari kunci yang cocok di Database
+    let found = false;
+    for (let key in recipeDb) {
+      if (input.includes(key) || key.includes(input)) {
+        addRecipeLink(key, 'manualSearchList');
+        found = true;
+      }
+    }
+
+    if (!found) {
+      container.innerHTML = '<p style="font-size: 0.8rem; color: #EF4444; text-align: center;">Maaf, bahan tersebut belum ada di database resep kami.</p>';
+    }
+  }
+
+  // SCAN STRUK LOGIC (TETAP SAMA)
   document.getElementById('scanBill').addEventListener('change', async function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -145,12 +187,12 @@
       ];
 
       let found = 0;
-      recipeList.innerHTML = ""; // Bersihkan list resep lama
+      recipeList.innerHTML = ""; 
 
       items.forEach(item => {
         if (scanResult.includes(item.key)) {
           addNewItem(item.name, item.emoji);
-          addRecipeLink(item.key);
+          addRecipeLink(item.key, 'recipeList');
           found++;
         }
       });
@@ -180,9 +222,9 @@
     list.prepend(div);
   }
 
-  // FUNGSI MENAMPILKAN LINK RESEP
-  function addRecipeLink(key) {
-    const recipeList = document.getElementById('recipeList');
+  // FUNGSI MENAMPILKAN LINK RESEP (DIPERBARUI UNTUK MENDUKUNG 2 TARGET)
+  function addRecipeLink(key, targetId) {
+    const container = document.getElementById(targetId);
     const data = recipeDb[key];
     if(!data) return;
 
@@ -194,18 +236,15 @@
       <div class="recipe-cal">🔥 ${data.cal}</div>
       <p style="font-size: 0.7rem; color: #666; margin-top: 4px;">Klik untuk cara membuat</p>
     `;
-    recipeList.appendChild(div);
+    container.appendChild(div);
   }
 
-  // FUNGSI TAMPILKAN MODAL
   function showRecipe(key) {
     const data = recipeDb[key];
     document.getElementById('modalTitle').innerText = data.name;
     document.getElementById('modalCal').innerText = "Estimasi Kalori: " + data.cal;
-    
     const stepsHtml = data.steps.map(step => `<li>${step}</li>`).join('');
     document.getElementById('modalSteps').innerHTML = stepsHtml;
-    
     document.getElementById('recipeModal').style.display = 'flex';
   }
 
