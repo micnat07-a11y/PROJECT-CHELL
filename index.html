@@ -10,54 +10,296 @@
 
   <style>
     /* Reset & Base Styles */
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: #f9fafb; color: #111827; line-height: 1.5; display: flex; flex-direction: column; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
-    main { flex-grow: 1; padding: 1rem; max-width: 28rem; margin: 0 auto; width: 100%; }
-    
-    header { background-color: #7FB77E; color: white; padding: 3rem 1rem 1.5rem 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 50; border-bottom-left-radius: 1.5rem; border-bottom-right-radius: 1.5rem; }
-    header h1 { font-family: 'Pacifico', cursive; font-size: 1.8rem; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
-    .card { background: white; padding: 1.5rem; border-radius: 1rem; margin-bottom: 1.5rem; border: 1px solid #f3f4f6; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
-    .card-title-box { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
-    .icon-bg { padding: 0.75rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; }
+    body {
+      background-color: #f9fafb;
+      color: #111827;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    main {
+      flex-grow: 1;
+      padding: 1rem;
+      max-width: 28rem;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    header {
+      background-color: #7FB77E;
+      color: white;
+      padding: 3rem 1rem 1.5rem 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom-left-radius: 1.5rem;
+      border-bottom-right-radius: 1.5rem;
+    }
+
+    .header-content {
+      max-width: 28rem;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 1.8rem;
+      font-weight: 400;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    header p {
+      font-size: 0.875rem;
+      color: #f0fff4;
+      opacity: 0.9;
+    }
+
+    .notif-icon { position: relative; }
+    .notif-badge {
+      position: absolute;
+      top: -0.25rem;
+      right: -0.25rem;
+      background-color: #EF4444;
+      font-size: 0.75rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      font-weight: 700;
+    }
+
+    .card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #f3f4f6;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title-box {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .icon-bg {
+      padding: 0.75rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .icon-green { background-color: #f0fdf4; color: #7FB77E; }
     .icon-amber { background-color: #fffbeb; color: #f59e0b; }
 
-    .btn-primary { width: 100%; background-color: #7FB77E; color: white; font-weight: 700; padding: 0.75rem; border-radius: 0.75rem; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: 0.2s; }
+    .btn-primary {
+      width: 100%;
+      background-color: #7FB77E;
+      color: white;
+      font-weight: 700;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+
     .btn-primary:active { transform: scale(0.98); }
 
-    /* Input Style */
-    .input-group { margin-bottom: 1rem; }
-    .input-group input { width: 100%; padding: 0.85rem; border: 1.5px solid #e5e7eb; border-radius: 0.75rem; outline: none; transition: 0.2s; font-size: 0.875rem; }
-    .input-group input:focus { border-color: #7FB77E; box-shadow: 0 0 0 3px rgba(127, 183, 126, 0.2); }
+    .inventory-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid;
+      margin-top: 0.75rem;
+    }
 
-    /* Inventory & Recipe */
-    .inventory-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #f3f4f6; margin-top: 0.75rem; background: #f9fafb; }
-    .recipe-result { background: #f0fdf4; padding: 1rem; border-radius: 0.75rem; border: 1px solid #dcfce7; margin-top: 1rem; animation: slideIn 0.3s ease-out; }
-    
-    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .item-exp { background-color: #fef2f2; border-color: #fee2e2; }
+    .item-safe { background-color: #f9fafb; border-color: #f3f4f6; }
 
-    /* Modal */
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); z-index: 1000; align-items: flex-end; }
-    .modal-content { background: white; width: 100%; max-width: 28rem; margin: 0 auto; border-top-left-radius: 1.5rem; border-top-right-radius: 1.5rem; padding: 2rem; position: relative; }
-    .receipt-container { background: #fdfdfd; border: 1px dashed #ccc; padding: 1rem; margin: 1rem 0; font-family: monospace; }
-    .receipt-line { display: flex; justify-content: space-between; font-size: 0.875rem; border-bottom: 1px solid #eee; padding: 0.25rem 0; }
+    .badge-danger {
+      background-color: #EF4444;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .recipe-card {
+      background-color: #f9fafb;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      border: 1px solid #f3f4f6;
+    }
+
+    .recipe-img { width: 100%; height: 8rem; object-fit: cover; }
+    .recipe-info { padding: 1rem; }
+    .recipe-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .recipe-cal { text-align: right; color: #7FB77E; font-weight: 700; }
+    .recipe-cal span { font-size: 1.25rem; }
+    .recipe-cal small { display: block; font-size: 0.75rem; color: #6b7280; }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: flex-end;
+    }
+
+    .modal-content {
+      background: white;
+      width: 100%;
+      max-width: 28rem;
+      margin: 0 auto;
+      border-top-left-radius: 1.5rem;
+      border-top-right-radius: 1.5rem;
+      padding: 2rem;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      font-size: 2rem;
+      color: #9ca3af;
+      cursor: pointer;
+    }
+
+    .ingredient-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      border-bottom: 1px dashed #e5e7eb;
+      font-size: 0.875rem;
+    }
+
+    .step-list { margin-top: 1rem; padding-left: 1.25rem; font-size: 0.875rem; }
+    .step-list li { margin-bottom: 0.5rem; }
 
     .hidden { display: none; }
     .text-sm { font-size: 0.875rem; color: #4b5563; }
     .text-xs { font-size: 0.75rem; color: #6b7280; }
 
-    #loginOverlay { position: fixed; inset: 0; background: #7FB77E; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-    footer { text-align: center; padding: 1.5rem; font-size: 0.75rem; color: #9ca3af; background: white; border-top: 1px solid #f3f4f6; }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-top: 1px solid #f3f4f6;
+      background: white;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    #loginOverlay {
+      position: fixed;
+      inset: 0;
+      background: #7FB77E;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .login-card {
+      background: white;
+      width: 100%;
+      max-width: 24rem;
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-card h2 {
+      font-family: 'Pacifico', cursive;
+      color: #7FB77E;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: #374151;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      outline: none;
+    }
+
+    .form-group input:focus { border-color: #7FB77E; }
   </style>
 </head>
+
 <body>
 
   <div id="loginOverlay">
-    <div style="background:white; padding:2rem; border-radius:1.5rem; width:100%; max-width:24rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
-      <h2 style="font-family:'Pacifico'; color:#7FB77E; text-align:center; margin-bottom:1rem;">MealPrep</h2>
+    <div class="login-card">
+      <h2>MealPrep</h2>
+      <p style="text-align: center; font-size: 0.875rem; color: #6b7280; margin-bottom: 1.5rem;">Daftar Akun Baru</p>
       <form id="loginForm">
-        <input type="text" id="accName" placeholder="Username Anda" required style="width:100%; padding:0.75rem; margin-bottom:1rem; border:1px solid #ddd; border-radius:0.5rem; outline:none;">
+        <div class="form-group">
+          <label>NAMA EMAIL</label>
+          <input type="email" id="emailName" placeholder="nama@email.com" required>
+        </div>
+        <div class="form-group">
+          <label>PASSWORD EMAIL</label>
+          <input type="password" id="emailPass" placeholder="••••••••" required>
+        </div>
+        <hr style="margin: 1rem 0; border: 0; border-top: 1px solid #eee;">
+        <div class="form-group">
+          <label>NAMA AKUN</label>
+          <input type="text" id="accName" placeholder="Username" required>
+        </div>
+        <div class="form-group">
+          <label>PASSWORD AKUN</label>
+          <input type="password" id="accPass" placeholder="••••••••" required>
+        </div>
         <button type="submit" class="btn-primary">Masuk ke Aplikasi</button>
       </form>
     </div>
@@ -67,7 +309,15 @@
     <div class="header-content">
       <div>
         <h1>MealPrep</h1>
-        <p id="headerWelcome">Hemat bahan • Resep Sehat</p>
+        <p id="headerWelcome">Hemat bahan • Resep Sehat • Notifikasi</p>
+      </div>
+      <div class="notif-icon">
+        <span class="notif-badge">2</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
       </div>
     </div>
   </header>
@@ -75,47 +325,103 @@
   <main>
     <section class="card">
       <div class="card-title-box">
-        <div class="icon-bg icon-green">🍳</div>
-        <h2 style="font-weight: 600;">Mau Masak Apa?</h2>
+        <div class="icon-bg icon-green">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+            <line x1="1" y1="10" x2="23" y2="10"></line>
+          </svg>
+        </div>
+        <h2 style="font-weight: 600;">Scan Struk Belanja</h2>
       </div>
-      <p class="text-sm" style="margin-bottom: 1rem;">Masukkan bahan yang ingin kamu olah (misal: Ayam, Telur, Susu).</p>
-      <div class="input-group">
-        <input type="text" id="ingredientInput" placeholder="Ketik bahan di sini...">
-      </div>
-      <button onclick="findRecipeByInput()" class="btn-primary">Cari Rekomendasi</button>
-      
-      <div id="customRecipeResult"></div>
-    </section>
-
-    <section class="card">
-      <div class="card-title-box">
-        <div class="icon-bg icon-green">📸</div>
-        <h2 style="font-weight: 600;">Scan Struk</h2>
-      </div>
+      <p class="text-sm" style="margin-bottom: 1.25rem;">Pindai struk untuk mencatat inventori & kadaluarsa otomatis.</p>
       <input type="file" id="scanBill" accept="image/*" capture="environment" class="hidden">
-      <button onclick="document.getElementById('scanBill').click()" class="btn-primary">Ambil Foto Struk</button>
+      <button onclick="document.getElementById('scanBill').click()" class="btn-primary">
+        Ambil Foto Struk
+      </button>
     </section>
 
     <section class="card">
-      <div class="card-title-box">
-        <div class="icon-bg icon-amber">❄️</div>
-        <h2 style="font-weight: 600;">Isi Kulkas</h2>
+      <div class="card-title-box" style="justify-content: space-between; margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="icon-bg icon-amber">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2"></path>
+              <path d="M21 12v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6"></path>
+              <path d="M3 8h18"></path>
+            </svg>
+          </div>
+          <h2 style="font-weight: 600;">Isi Kulkas Anda</h2>
+        </div>
       </div>
+
       <div id="inventoryList">
-        <div class="inventory-item">
-          <p style="font-size: 0.875rem; font-weight: 500;">Dada Ayam Fillet</p>
-          <p class="text-xs">Exp: 20 Apr 2026</p>
+        <div class="inventory-item item-exp">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.5rem;">🥛</span>
+            <div>
+              <p style="font-size: 0.875rem; font-weight: 500;">Susu UHT Full Cream</p>
+              <p class="text-xs">Exp: 11 Apr 2026</p>
+            </div>
+          </div>
+          <span class="badge-danger">⚠️ 2 Hari!</span>
+        </div>
+
+        <div class="inventory-item item-safe">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.5rem;">🍗</span>
+            <div>
+              <p style="font-size: 0.875rem; font-weight: 500;">Dada Ayam Fillet</p>
+              <p class="text-xs">Exp: 20 Apr 2026</p>
+            </div>
+          </div>
+          <span style="color: #10B981; font-size: 0.75rem; font-weight: 600;">Aman</span>
         </div>
       </div>
     </section>
+
+    <section class="card">
+      <div class="card-title-box">
+        <div class="icon-bg icon-green">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+        </div>
+        <h2 style="font-weight: 600;">Ide Masakan Hari Ini</h2>
+      </div>
+      <div id="recommendedRecipe"></div>
+    </section>
   </main>
+
+  <div id="recipeModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeRecipe()">&times;</span>
+      <h2 id="modalTitle" style="margin-bottom: 0.5rem; color: #374151;"></h2>
+      <div id="modalCalBadge" style="background: #f0fdf4; color: #166534; display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 700; margin-bottom: 1.5rem;"></div>
+      
+      <h4 style="margin-bottom: 0.75rem; border-left: 4px solid #7FB77E; padding-left: 0.5rem;">Bahan & Takaran</h4>
+      <div id="modalIngredients"></div>
+
+      <h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; border-left: 4px solid #7FB77E; padding-left: 0.5rem;">Cara Memasak</h4>
+      <ol id="modalSteps" class="step-list"></ol>
+
+      <button onclick="closeRecipe()" class="btn-primary" style="margin-top: 2rem;">Selesai Memasak</button>
+    </div>
+  </div>
 
   <div id="scanResultModal" class="modal">
     <div class="modal-content">
-      <h2 style="margin-bottom: 0.5rem;">Data Struk Terbaca</h2>
-      <div class="receipt-container" id="receiptTextList"></div>
-      <button onclick="confirmResults()" class="btn-primary">Simpan ke Inventori</button>
-      <p onclick="closeScanModal()" style="text-align:center; margin-top:1rem; color:#999; font-size:0.875rem; cursor:pointer;">Batal</p>
+      <span class="close-modal" onclick="closeScanModal()">&times;</span>
+      <h2 style="margin-bottom: 1rem; color: #374151;">Hasil Scan Struk</h2>
+      <p class="text-sm" style="margin-bottom: 1rem;">Bahan yang terdeteksi secara otomatis:</p>
+      
+      <div id="scanItemsList" style="margin-bottom: 1.5rem;">
+        </div>
+
+      <button onclick="confirmScanResults()" class="btn-primary">Konfirmasi & Simpan</button>
     </div>
   </div>
 
@@ -124,78 +430,172 @@
   </footer>
 
   <script>
-    // Library Resep yang diperluas
+    // 1. Registrasi Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('SW terdaftar!', reg))
+          .catch(err => console.error('SW gagal!', err));
+      });
+    }
+
+    // 2. Data Master Resep
     const recipeLibrary = [
-      { keyword: "Ayam", name: "Tumis Ayam Mentega", desc: "Potong ayam kotak-kotak, tumis dengan mentega dan kecap manis." },
-      { keyword: "Susu", name: "Creamy Oatmeal", desc: "Rebus oat dengan susu hingga mengental, tambahkan buah." },
-      { keyword: "Telur", name: "Orak Arik Telur Sayur", desc: "Kocok telur, tumis dengan bayam atau wortel yang baru dibeli." },
-      { keyword: "Brokoli", name: "Cah Brokoli Bawang Putih", desc: "Tumis bawang putih cincang, masukkan brokoli dan sedikit saus tiram." }
+      {
+        keyword: "Ayam",
+        name: "Tumis Ayam Mentega",
+        cal: 450,
+        img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&q=60",
+        desc: "Protein tinggi menggunakan stok Dada Ayam Anda.",
+        ingredients: [
+          { item: "Dada Ayam Fillet", qty: "200 gram" },
+          { item: "Mentega", qty: "2 sdm" },
+          { item: "Bawang Bombay", qty: "1/4 buah" },
+          { item: "Kecap Manis", qty: "1 sdm" }
+        ],
+        steps: [
+          "Potong ayam dadu, tumis bawang dengan mentega.",
+          "Masukkan ayam hingga matang kecokelatan.",
+          "Tambahkan bumbu, aduk rata dan sajikan."
+        ]
+      },
+      {
+        keyword: "Susu",
+        name: "Creamy Oatmeal",
+        cal: 280,
+        img: "https://images.unsplash.com/photo-1517673132405-a56a62b18acc?w=400&q=60",
+        desc: "Manfaatkan Susu UHT H-2 Anda untuk sarapan sehat.",
+        ingredients: [
+          { item: "Susu UHT", qty: "250 ml" },
+          { item: "Oatmeal", qty: "5 sdm" },
+          { item: "Madu", qty: "1 sdm" }
+        ],
+        steps: [
+          "Masak susu dan oatmeal hingga mengental.",
+          "Tuang ke mangkuk, tambahkan madu.",
+          "Sajikan selagi hangat."
+        ]
+      }
     ];
 
-    // --- FITUR BARU: CARI RESEP BERDASARKAN INPUT ---
-    function findRecipeByInput() {
-      const input = document.getElementById('ingredientInput').value.toLowerCase();
-      const resultDiv = document.getElementById('customRecipeResult');
-      
-      if (!input) {
-        resultDiv.innerHTML = "<p class='text-xs' style='color:red; margin-top:0.5rem;'>Tolong masukkan minimal satu bahan!</p>";
-        return;
-      }
+    // 3. Simulasi Data OCR Struk
+    const dummyScanResults = [
+      { name: "Telur Ayam", icon: "🥚", exp: "2026-05-10", status: "safe" },
+      { name: "Bayam Hijau", icon: "🥬", exp: "2026-04-25", status: "exp" },
+      { name: "Yogurt Blueberry", icon: "🥣", exp: "2026-05-01", status: "safe" }
+    ];
 
-      // Cari resep yang keyword-nya ada di dalam input user
-      const matches = recipeLibrary.filter(r => input.includes(r.keyword.toLowerCase()));
+    // --- FUNGSI UTAMA ---
 
-      if (matches.length > 0) {
-        resultDiv.innerHTML = matches.map(m => `
-          <div class="recipe-result">
-            <h4 style="font-size: 0.9rem; color: #166534;">✨ Rekomendasi: ${m.name}</h4>
-            <p class="text-xs" style="margin-top:0.25rem;">${m.desc}</p>
-          </div>
-        `).join('');
-      } else {
-        resultDiv.innerHTML = `
-          <div class="recipe-result" style="background:#fef2f2; border-color:#fee2e2;">
-            <p class="text-xs" style="color:#991b1b;">Maaf, resep untuk bahan tersebut belum tersedia.</p>
+    function suggestRecipe() {
+      const inventory = document.getElementById('inventoryList').innerText;
+      const display = document.getElementById('recommendedRecipe');
+      const match = recipeLibrary.find(r => inventory.toLowerCase().includes(r.keyword.toLowerCase()));
+
+      if (match) {
+        display.innerHTML = `
+          <div class="recipe-card">
+            <img src="${match.img}" class="recipe-img">
+            <div class="recipe-info">
+              <div class="recipe-header">
+                <h3>${match.name}</h3>
+                <div class="recipe-cal"><span>${match.cal}</span><small>kkal</small></div>
+              </div>
+              <p class="text-xs" style="margin: 0.5rem 0 1rem 0;">${match.desc}</p>
+              <button onclick="openRecipe('${match.keyword}')" class="btn-primary" style="font-size: 0.875rem;">Lihat Cara Memasak</button>
+            </div>
           </div>`;
+      } else {
+        display.innerHTML = `<p class="text-xs" style="text-align:center; padding:1rem;">Belum ada resep yang cocok dengan bahan di kulkas.</p>`;
       }
     }
 
-    // --- LOGIKA SCAN (Sesuai Permintaan Sebelumnya) ---
-    const simulatedData = [
-      { name: "SUSU UHT FULL CREAM", exp: "2026-05-12", qty: "1 PCS" },
-      { name: "TELUR AYAM 10 BUTIR", exp: "2026-05-05", qty: "1 PACK" }
-    ];
+    function openRecipe(key) {
+      const r = recipeLibrary.find(x => x.keyword === key);
+      document.getElementById('modalTitle').innerText = r.name;
+      document.getElementById('modalCalBadge').innerText = r.cal + " kkal";
+      document.getElementById('modalIngredients').innerHTML = r.ingredients.map(i => `<div class="ingredient-row"><span>${i.item}</span><span style="font-weight:700; color:#7FB77E;">${i.qty}</span></div>`).join('');
+      document.getElementById('modalSteps').innerHTML = r.steps.map(s => `<li>${s}</li>`).join('');
+      document.getElementById('recipeModal').style.display = 'flex';
+    }
+
+    function closeRecipe() { document.getElementById('recipeModal').style.display = 'none'; }
+
+    // --- LOGIKA SCAN STRUK ---
 
     document.getElementById("scanBill").addEventListener("change", function(e) {
       if (!e.target.files[0]) return;
-      document.getElementById("receiptTextList").innerHTML = "<p>Membaca teks...</p>";
+      
+      // Simulasi proses loading scan
+      const listContainer = document.getElementById("scanItemsList");
+      listContainer.innerHTML = "<p class='text-sm'>Memproses struk...</p>";
       document.getElementById('scanResultModal').style.display = 'flex';
+
       setTimeout(() => {
-        document.getElementById("receiptTextList").innerHTML = simulatedData.map(d => `
-          <div class="receipt-line"><span>${d.name}</span><span>${d.qty}</span></div>
-        `).join('');
-      }, 1200);
+        renderScanResults(dummyScanResults);
+      }, 1500);
     });
 
-    function confirmResults() {
-      const list = document.getElementById("inventoryList");
-      simulatedData.forEach(d => {
-        const div = document.createElement("div");
-        div.className = "inventory-item";
-        div.innerHTML = `<div><p style="font-size:0.875rem; font-weight:500;">${d.name}</p><p class="text-xs">Exp: ${d.exp}</p></div><span style="color:#7FB77E; font-size:0.75rem; font-weight:bold;">${d.qty}</span>`;
-        list.prepend(div);
-      });
-      closeScanModal();
+    function renderScanResults(items) {
+      const listContainer = document.getElementById("scanItemsList");
+      listContainer.innerHTML = items.map(item => `
+        <div class="inventory-item item-safe" style="margin-top:0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.25rem;">${item.icon}</span>
+            <div>
+              <p style="font-size: 0.875rem; font-weight: 600;">${item.name}</p>
+              <p class="text-xs">Kadaluarsa: ${item.exp}</p>
+            </div>
+          </div>
+          <input type="checkbox" checked style="accent-color: #7FB77E;">
+        </div>
+      `).join('');
     }
 
-    function closeScanModal() { document.getElementById('scanResultModal').style.display = 'none'; }
+    function confirmScanResults() {
+      dummyScanResults.forEach(item => addToInventory(item));
+      closeScanModal();
+      suggestRecipe(); // Update rekomendasi resep
+    }
 
-    // Login logic
+    function closeScanModal() {
+      document.getElementById('scanResultModal').style.display = 'none';
+    }
+
+    function addToInventory(item) {
+      const container = document.getElementById("inventoryList");
+      const el = document.createElement("div");
+      el.className = "inventory-item " + (item.status === "exp" ? "item-exp" : "item-safe");
+
+      el.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <span style="font-size: 1.5rem;">${item.icon || '📦'}</span>
+          <div>
+            <p style="font-size: 0.875rem; font-weight: 500;">${item.name}</p>
+            <p class="text-xs">Exp: ${item.exp}</p>
+          </div>
+        </div>
+        ${item.status === "exp" ? '<span class="badge-danger">Baru</span>' : '<span style="color: #10B981; font-size: 0.75rem; font-weight: 600;">Simpan</span>'}
+      `;
+      container.prepend(el);
+    }
+
+    // --- LOGIN & INIT ---
+
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      const user = document.getElementById('accName').value;
       document.getElementById('loginOverlay').style.display = 'none';
-      document.getElementById('headerWelcome').innerText = "Halo, " + document.getElementById('accName').value + "!";
+      document.getElementById('headerWelcome').innerText = "Halo, " + user + "! Siap masak apa hari ini?";
     });
+
+    window.onload = suggestRecipe;
+    window.onclick = (e) => { 
+      if(e.target.className === 'modal') {
+        closeRecipe();
+        closeScanModal();
+      }
+    };
   </script>
 </body>
 </html>
