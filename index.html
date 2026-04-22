@@ -8,52 +8,89 @@
   <meta name="theme-color" content="#7FB77E">
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-    body { background-color: #f9fafb; min-height: 100vh; }
+    body { background-color: #f9fafb; min-height: 100vh; overflow-x: hidden; }
+    
+    /* Login Overlay - Pastikan z-index paling tinggi */
+    #loginOverlay { 
+      position: fixed; 
+      inset: 0; 
+      background: #7FB77E; 
+      z-index: 9999; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+    }
+    .login-card { 
+      background: white; 
+      padding: 2.5rem; 
+      border-radius: 1.5rem; 
+      width: 90%; 
+      max-width: 400px; 
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
     header { background-color: #7FB77E; color: white; padding: 2rem 1rem; border-bottom-left-radius: 1.5rem; border-bottom-right-radius: 1.5rem; text-align: center; }
     h1 { font-family: 'Pacifico', cursive; font-size: 2rem; }
     main { padding: 1rem; max-width: 28rem; margin: 0 auto; }
     .card { background: white; padding: 1.5rem; border-radius: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .btn-primary { width: 100%; background: #7FB77E; color: white; border: none; padding: 0.8rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer; }
+    
+    .btn-primary { 
+      width: 100%; 
+      background: #7FB77E; 
+      color: white; 
+      border: none; 
+      padding: 0.8rem; 
+      border-radius: 0.5rem; 
+      font-weight: bold; 
+      cursor: pointer; 
+      transition: background 0.3s;
+    }
+    .btn-primary:active { transform: scale(0.98); }
     .btn-primary:disabled { background: #ccc; }
-    .inventory-item { display: flex; justify-content: space-between; padding: 0.8rem; border-bottom: 1px solid #eee; }
+
+    .inventory-item { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; border-bottom: 1px solid #eee; }
     .item-name { font-weight: 600; font-size: 0.9rem; }
-    .item-exp { font-size: 0.75rem; color: #666; }
-    .badge { background: #EF4444; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; }
-    #loginOverlay { position: fixed; inset: 0; background: #7FB77E; z-index: 100; display: flex; align-items: center; justify-content: center; }
-    .hidden { display: none; }
+    .badge { background: #EF4444; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
+    
+    .hidden { display: none !important; }
+    input[type="text"] { width: 100%; padding: 0.8rem; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 0.5rem; outline: none; }
+    input[type="text"]:focus { border-color: #7FB77E; }
   </style>
 </head>
 <body>
 
 <div id="loginOverlay">
-  <div style="background:white; padding:2rem; border-radius:1rem; width:80%;">
-    <h2 style="text-align:center; color:#7FB77E; font-family:'Pacifico'; margin-bottom:1rem;">MealPrep</h2>
-    <input type="text" id="accName" placeholder="Masukkan Nama" style="width:100%; padding:0.8rem; margin-bottom:1rem; border:1px solid #ddd; border-radius:0.5rem;">
-    <button onclick="login()" class="btn-primary">Masuk</button>
+  <div class="login-card">
+    <h2 style="color:#7FB77E; font-family:'Pacifico'; margin-bottom:1rem; font-size: 2.5rem;">MealPrep</h2>
+    <p style="margin-bottom: 1.5rem; color: #666;">Silahkan masukkan nama anda</p>
+    <input type="text" id="accName" placeholder="Contoh: Michelle" required>
+    <button type="button" onclick="handleLogin()" class="btn-primary">Masuk ke Aplikasi</button>
   </div>
 </div>
 
 <header>
-  <h1 id="brandTitle">MealPrep</h1>
+  <h1>MealPrep</h1>
   <p id="welcomeUser">Hemat bahan • Resep Sehat</p>
 </header>
 
 <main>
   <section class="card">
-    <h3>📸 Scan Struk Belanja</h3>
-    <p style="font-size:0.8rem; color:#666; margin-bottom:1rem;">Otomatis masukkan barang ke kulkas.</p>
+    <h3 style="margin-bottom: 0.5rem;">📸 Scan Struk Belanja</h3>
+    <p style="font-size:0.8rem; color:#666; margin-bottom:1rem;">Pindai struk untuk input otomatis.</p>
     <input type="file" id="scanBill" accept="image/*" capture="environment" class="hidden">
     <button id="btnScan" onclick="document.getElementById('scanBill').click()" class="btn-primary">Ambil Foto Struk</button>
-    <p id="statusOCR" style="font-size:0.7rem; color:blue; margin-top:0.5rem; text-align:center;"></p>
+    <p id="statusOCR" style="font-size:0.7rem; color:#7FB77E; margin-top:0.5rem; text-align:center; font-weight: bold;"></p>
   </section>
 
   <section class="card">
-    <h3>🧊 Isi Kulkas</h3>
+    <h3 style="margin-bottom: 0.5rem;">🧊 Isi Kulkas</h3>
     <div id="inventoryList">
       <div class="inventory-item">
-        <div><p class="item-name">Susu UHT</p><p class="item-exp">Exp: 25 Apr 2026</p></div>
+        <div><p class="item-name">🥛 Susu UHT Full Cream</p><p style="font-size: 0.7rem; color: #999;">Exp: 25 Apr 2026</p></div>
         <span class="badge">H-3</span>
       </div>
     </div>
@@ -61,15 +98,21 @@
 </main>
 
 <script>
-  function login() {
-    const name = document.getElementById('accName').value;
-    if(name) {
-      document.getElementById('loginOverlay').classList.add('hidden');
-      document.getElementById('welcomeUser').innerText = "Halo, " + name + "!";
+  // Fungsi Login
+  function handleLogin() {
+    const nameInput = document.getElementById('accName');
+    const overlay = document.getElementById('loginOverlay');
+    const welcomeText = document.getElementById('welcomeUser');
+    
+    if(nameInput.value.trim() !== "") {
+      overlay.classList.add('hidden');
+      welcomeText.innerText = "Halo, " + nameInput.value + "! Siap masak apa hari ini?";
+    } else {
+      alert("Masukkan nama dulu ya!");
     }
   }
 
-  // LOGIKA SCAN STRUK (OCR)
+  // Fungsi Scan OCR
   document.getElementById('scanBill').addEventListener('change', async function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -78,49 +121,56 @@
     const status = document.getElementById('statusOCR');
 
     btn.disabled = true;
-    btn.innerText = "Membaca Struk...";
-    status.innerText = "Memproses gambar dengan AI...";
+    btn.innerText = "Sedang Membaca...";
+    status.innerText = "AI sedang mengenali teks di struk...";
 
     try {
       const { data: { text } } = await Tesseract.recognize(file, 'ind');
-      console.log("Hasil Scan:", text.toUpperCase());
-
-      // Kamus pencarian kata
+      const scanResult = text.toUpperCase();
+      
       const items = [
-        { key: 'SUSU', name: 'Susu Segar', emoji: '🥛' },
-        { key: 'AYAM', name: 'Daging Ayam', emoji: '🍗' },
-        { key: 'TELUR', name: 'Telur Pack', emoji: '🥚' },
-        { key: 'MIE', name: 'Mie Instan', emoji: '🍜' }
+        { key: 'SUSU', name: 'Susu UHT', emoji: '🥛' },
+        { key: 'AYAM', name: 'Dada Ayam', emoji: '🍗' },
+        { key: 'TELUR', name: 'Telur Ayam', emoji: '🥚' },
+        { key: 'MIE', name: 'Mie Instan', emoji: '🍜' },
+        { key: 'BERAS', name: 'Beras Putih', emoji: '🌾' }
       ];
 
       let found = 0;
       items.forEach(item => {
-        if (text.toUpperCase().includes(item.key)) {
-          addItem(item.name, item.emoji);
+        if (scanResult.includes(item.key)) {
+          addNewItem(item.name, item.emoji);
           found++;
         }
       });
 
-      status.innerText = found > 0 ? `Berhasil scan ${found} barang!` : "Tidak ada barang yang dikenali.";
+      status.innerText = found > 0 ? `Berhasil scan ${found} barang!` : "Teks terbaca, tapi barang tidak dikenal.";
     } catch (err) {
-      status.innerText = "Error saat membaca struk.";
+      status.innerText = "Gagal memproses gambar.";
+      console.error(err);
     } finally {
       btn.disabled = false;
       btn.innerText = "Ambil Foto Struk";
     }
   });
 
-  function addItem(name, emoji) {
+  function addNewItem(name, emoji) {
     const list = document.getElementById('inventoryList');
     const div = document.createElement('div');
     div.className = 'inventory-item';
-    div.innerHTML = `<div><p class="item-name">${emoji} ${name}</p><p class="item-exp">Exp: 7 Hari lagi</p></div><span class="badge" style="background:#10B981">BARU</span>`;
+    div.innerHTML = `
+      <div>
+        <p class="item-name">${emoji} ${name}</p>
+        <p style="font-size: 0.7rem; color: #999;">Exp: 7 hari dari sekarang</p>
+      </div>
+      <span class="badge" style="background:#10B981">BARU</span>
+    `;
     list.prepend(div);
   }
 
-  // Service Worker (Agar PWA Jalan)
+  // Service Worker
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').then(() => console.log("SW OK"));
+    navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Aktif"));
   }
 </script>
 </body>
