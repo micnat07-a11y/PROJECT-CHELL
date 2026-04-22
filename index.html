@@ -13,44 +13,27 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
     body { background-color: #f9fafb; min-height: 100vh; overflow-x: hidden; }
     
-    /* Login Overlay - Pastikan z-index paling tinggi */
-    #loginOverlay { 
-      position: fixed; 
-      inset: 0; 
-      background: #7FB77E; 
-      z-index: 9999; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-    }
-    .login-card { 
-      background: white; 
-      padding: 2.5rem; 
-      border-radius: 1.5rem; 
-      width: 90%; 
-      max-width: 400px; 
-      text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
+    /* Login Overlay */
+    #loginOverlay { position: fixed; inset: 0; background: #7FB77E; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+    .login-card { background: white; padding: 2.5rem; border-radius: 1.5rem; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
 
     header { background-color: #7FB77E; color: white; padding: 2rem 1rem; border-bottom-left-radius: 1.5rem; border-bottom-right-radius: 1.5rem; text-align: center; }
     h1 { font-family: 'Pacifico', cursive; font-size: 2rem; }
     main { padding: 1rem; max-width: 28rem; margin: 0 auto; }
     .card { background: white; padding: 1.5rem; border-radius: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     
-    .btn-primary { 
-      width: 100%; 
-      background: #7FB77E; 
-      color: white; 
-      border: none; 
-      padding: 0.8rem; 
-      border-radius: 0.5rem; 
-      font-weight: bold; 
-      cursor: pointer; 
-      transition: background 0.3s;
-    }
+    .btn-primary { width: 100%; background: #7FB77E; color: white; border: none; padding: 0.8rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-top: 0.5rem; }
     .btn-primary:active { transform: scale(0.98); }
-    .btn-primary:disabled { background: #ccc; }
+    
+    /* Resep Styling */
+    .recipe-card { background: #f0fdf4; padding: 1rem; border-radius: 0.8rem; margin-top: 0.8rem; border: 1px solid #dcfce7; cursor: pointer; }
+    .recipe-name { font-weight: bold; color: #166534; }
+    .recipe-cal { font-size: 0.8rem; color: #15803d; font-weight: bold; }
+
+    /* Modal Styling */
+    #recipeModal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 1rem; }
+    .modal-box { background: white; padding: 1.5rem; border-radius: 1.2rem; width: 100%; max-width: 350px; max-height: 80vh; overflow-y: auto; }
+    .step-list { margin-top: 1rem; padding-left: 1rem; font-size: 0.9rem; line-height: 1.5; }
 
     .inventory-item { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; border-bottom: 1px solid #eee; }
     .item-name { font-weight: 600; font-size: 0.9rem; }
@@ -58,7 +41,6 @@
     
     .hidden { display: none !important; }
     input[type="text"] { width: 100%; padding: 0.8rem; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 0.5rem; outline: none; }
-    input[type="text"]:focus { border-color: #7FB77E; }
   </style>
 </head>
 <body>
@@ -80,10 +62,17 @@
 <main>
   <section class="card">
     <h3 style="margin-bottom: 0.5rem;">📸 Scan Struk Belanja</h3>
-    <p style="font-size:0.8rem; color:#666; margin-bottom:1rem;">Pindai struk untuk input otomatis.</p>
     <input type="file" id="scanBill" accept="image/*" capture="environment" class="hidden">
     <button id="btnScan" onclick="document.getElementById('scanBill').click()" class="btn-primary">Ambil Foto Struk</button>
     <p id="statusOCR" style="font-size:0.7rem; color:#7FB77E; margin-top:0.5rem; text-align:center; font-weight: bold;"></p>
+  </section>
+
+  <section class="card" id="recipeSection">
+    <h3 style="margin-bottom: 0.5rem;">🍳 Rekomendasi Masakan</h3>
+    <p style="font-size:0.8rem; color:#666; margin-bottom:0.5rem;">Berdasarkan bahan di kulkas kamu:</p>
+    <div id="recipeList">
+       <p style="font-size: 0.8rem; color: #999; text-align: center;">Scan struk dulu untuk lihat resep.</p>
+    </div>
   </section>
 
   <section class="card">
@@ -97,8 +86,27 @@
   </section>
 </main>
 
+<div id="recipeModal">
+  <div class="modal-box">
+    <h2 id="modalTitle" style="color: #7FB77E; font-family: 'Pacifico';"></h2>
+    <p id="modalCal" style="font-weight: bold; color: #16a34a; margin-top: 0.5rem;"></p>
+    <hr style="margin: 1rem 0; border: 0; border-top: 1px solid #eee;">
+    <h4 style="font-size: 0.9rem;">Cara Memasak:</h4>
+    <ol id="modalSteps" class="step-list"></ol>
+    <button class="btn-primary" onclick="closeModal()">Tutup</button>
+  </div>
+</div>
+
 <script>
-  // Fungsi Login
+  // DATABASE RESEP
+  const recipeDb = {
+    'SUSU': { name: 'Puding Susu Vanila', cal: '150 kkal', steps: ['Campur susu dan gula.', 'Tambahkan agar-agar bubuk.', 'Masak hingga mendidih.', 'Tuang ke cetakan dan dinginkan.'] },
+    'AYAM': { name: 'Ayam Tumis Mentega', cal: '450 kkal', steps: ['Potong ayam jadi dadu.', 'Tumis bawang putih dengan mentega.', 'Masukkan ayam dan saus tiram.', 'Masak hingga matang kecokelatan.'] },
+    'TELUR': { name: 'Omelet Sayur Sehat', cal: '200 kkal', steps: ['Kocok telur dengan irisan daun bawang.', 'Panaskan sedikit minyak.', 'Goreng telur hingga matang.', 'Sajikan selagi hangat.'] },
+    'MIE': { name: 'Mie Nyemek Spesial', cal: '350 kkal', steps: ['Rebus mie setengah matang.', 'Tumis bumbu halus dan telur.', 'Masukkan sedikit air dan mie.', 'Aduk hingga kuah mengental.'] },
+    'BERAS': { name: 'Nasi Goreng Simpel', cal: '400 kkal', steps: ['Siapkan nasi putih dingin.', 'Tumis bumbu nasi goreng.', 'Campurkan nasi dan aduk rata.', 'Tambahkan kecap manis dan telur.'] }
+  };
+
   function handleLogin() {
     const nameInput = document.getElementById('accName');
     const overlay = document.getElementById('loginOverlay');
@@ -112,13 +120,13 @@
     }
   }
 
-  // Fungsi Scan OCR
   document.getElementById('scanBill').addEventListener('change', async function(e) {
     const file = e.target.files[0];
     if (!file) return;
 
     const btn = document.getElementById('btnScan');
     const status = document.getElementById('statusOCR');
+    const recipeList = document.getElementById('recipeList');
 
     btn.disabled = true;
     btn.innerText = "Sedang Membaca...";
@@ -137,17 +145,21 @@
       ];
 
       let found = 0;
+      recipeList.innerHTML = ""; // Bersihkan list resep lama
+
       items.forEach(item => {
         if (scanResult.includes(item.key)) {
           addNewItem(item.name, item.emoji);
+          addRecipeLink(item.key);
           found++;
         }
       });
 
       status.innerText = found > 0 ? `Berhasil scan ${found} barang!` : "Teks terbaca, tapi barang tidak dikenal.";
+      if(found === 0) recipeList.innerHTML = '<p style="font-size: 0.8rem; color: #999; text-align: center;">Tidak ada resep yang cocok.</p>';
+      
     } catch (err) {
       status.innerText = "Gagal memproses gambar.";
-      console.error(err);
     } finally {
       btn.disabled = false;
       btn.innerText = "Ambil Foto Struk";
@@ -168,7 +180,39 @@
     list.prepend(div);
   }
 
-  // Service Worker
+  // FUNGSI MENAMPILKAN LINK RESEP
+  function addRecipeLink(key) {
+    const recipeList = document.getElementById('recipeList');
+    const data = recipeDb[key];
+    if(!data) return;
+
+    const div = document.createElement('div');
+    div.className = 'recipe-card';
+    div.onclick = () => showRecipe(key);
+    div.innerHTML = `
+      <div class="recipe-name">🍲 ${data.name}</div>
+      <div class="recipe-cal">🔥 ${data.cal}</div>
+      <p style="font-size: 0.7rem; color: #666; margin-top: 4px;">Klik untuk cara membuat</p>
+    `;
+    recipeList.appendChild(div);
+  }
+
+  // FUNGSI TAMPILKAN MODAL
+  function showRecipe(key) {
+    const data = recipeDb[key];
+    document.getElementById('modalTitle').innerText = data.name;
+    document.getElementById('modalCal').innerText = "Estimasi Kalori: " + data.cal;
+    
+    const stepsHtml = data.steps.map(step => `<li>${step}</li>`).join('');
+    document.getElementById('modalSteps').innerHTML = stepsHtml;
+    
+    document.getElementById('recipeModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('recipeModal').style.display = 'none';
+  }
+
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Aktif"));
   }
