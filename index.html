@@ -1,36 +1,4 @@
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  
-  <!-- ✅ TAMBAH: Security headers -->
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  
-  <!-- ✅ TAMBAH: SEO & PWA discoverability -->
-  <meta name="description" content="Aplikasi meal prep untuk hemat bahan makanan, resep sehat, dan notifikasi kadaluarsa otomatis.">
-  <meta name="application-name" content="MealPrep">
-  <meta name="keywords" content="meal prep, resep masak, hemat bahan, kadaluarsa makanan">
-  
-  <!-- ✅ TAMBAH: Open Graph (meningkatkan skor PWA info section) -->
-  <meta property="og:title" content="MealPrep">
-  <meta property="og:description" content="Hemat bahan, resep sehat, notifikasi kadaluarsa otomatis.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://micnat07-a11y.github.io/PROJECT-CHELL/">
-  <meta property="og:image" content="https://micnat07-a11y.github.io/PROJECT-CHELL/icons/icon-512x512.png">
-
-  <!-- sudah ada, pertahankan -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#7FB77E" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icons/logo-192x192.png" type="image/png" />
-  
-  <!-- ✅ TAMBAH: Apple touch icon -->
-  <link rel="apple-touch-icon" href="icons/icon-512x512.png">
-  
-  <title>MealPrep</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-</head>
+l="stylesheet">
 
   <style>
     /* Reset & Base Styles */
@@ -298,6 +266,7 @@
 
     .form-group input:focus { border-color: #7FB77E; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 
 <body>
@@ -519,51 +488,183 @@
     }
 
     function closeRecipe() { document.getElementById('recipeModal').style.display = 'none'; }
-document.getElementById('scanBill').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = function(event) {
-    const imgUrl = event.target.result;
+    // Generate tanggal kadaluarsa otomatis (default 7-14 hari)
+    function generateExpDate(days = 7) {
+      const date = new Date();
+      date.setDate(date.getDate() + days + Math.floor(Math.random() * 8)); // Random 7-14 hari
+      return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
 
-    // Tampilkan preview gambar + pesan loading
-    const inventoryList = document.getElementById('inventoryList');
-    inventoryList.innerHTML = `
-      <div style="text-align:center; padding: 1rem;">
-        <img src="${imgUrl}" style="width:100%; border-radius:0.75rem; margin-bottom:1rem;">
-        <p style="color:#7FB77E; font-weight:600;">⏳ Memproses struk...</p>
-      </div>
-    `;
+    // Hitung hari tersisa hingga kadaluarsa
+    function daysUntilExpiry(expDate) {
+      const exp = new Date(expDate);
+      const today = new Date();
+      const diff = Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
+      return diff;
+    }
 
-    // Simulasi hasil scan (ganti dengan AI/OCR jika ada)
-    setTimeout(() => {
-      inventoryList.innerHTML = `
-        <div class="inventory-item item-safe">
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <span style="font-size:1.5rem;">🛒</span>
-            <div>
-              <p style="font-size:0.875rem; font-weight:500;">Item dari Struk</p>
-              <p class="text-xs">Berhasil discan!</p>
-            </div>
+    // Tentukan status item (safe/warning/exp)
+    function getItemStatus(expDate) {
+      const days = daysUntilExpiry(expDate);
+      if (days <= 0) return "exp";
+      if (days <= 3) return "warning";
+      return "safe";
+    }
+
+    // Tentukan emoji berdasarkan nama item
+    function getItemEmoji(name) {
+      const lower = name.toLowerCase();
+      if (lower.includes('ayam') || lower.includes('daging') || lower.includes('sapi') || lower.includes('babi')) return '🍗';
+      if (lower.includes('susu') || lower.includes('yogurt') || lower.includes('keju')) return '🥛';
+      if (lower.includes('telur')) return '🥚';
+      if (lower.includes('ikan') || lower.includes('udang')) return '🐟';
+      if (lower.includes('buah') || lower.includes('apel') || lower.includes('jeruk') || lower.includes('mangga')) return '🍎';
+      if (lower.includes('sayur') || lower.includes('brokoli') || lower.includes('wortel')) return '🥦';
+      if (lower.includes('roti') || lower.includes('bread')) return '🍞';
+      if (lower.includes('mie') || lower.includes('pasta')) return '🍝';
+      if (lower.includes('beras') || lower.includes('nasi')) return '🍚';
+      if (lower.includes('mentega') || lower.includes('minyak')) return '🧈';
+      return '📦'; // Default
+    }
+
+    function processReceipt(text) {
+      const lines = text.split("\n").filter(line => line.trim().length > 0);
+      let itemsAdded = 0;
+      
+      lines.forEach((line, index) => {
+        line = line.trim();
+        
+        // Skip jika baris terlalu pendek
+        if (line.length < 3) return;
+        
+        // Skip jika berisi terlalu banyak angka (kemungkinan harga/total)
+        if (line.match(/\d{2,}/g) && line.match(/\d{2,}/g).length > 2) return;
+        
+        // Skip jika hanya angka
+        if (/^\d+$/.test(line)) return;
+        
+        // Skip jika baris sebelumnya sama (duplikasi)
+        if (index > 0 && line === lines[index - 1].trim()) return;
+
+        const item = {
+          name: line,
+          exp: generateExpDate(),
+          status: getItemStatus(generateExpDate())
+        };
+
+        addToInventory(item);
+        itemsAdded++;
+      });
+
+      // Simpan inventory ke localStorage
+      saveInventoryToStorage();
+      
+      if (itemsAdded > 0) {
+        alert(`✅ ${itemsAdded} item ditambahkan ke kulkas!`);
+        suggestRecipe(); // Update rekomendasi resep
+      } else {
+        alert('❌ Tidak ada item terdeteksi. Coba foto yang lebih jelas.');
+      }
+    }
+
+    function addToInventory(item) {
+      const container = document.getElementById("inventoryList");
+      
+      // Buat element item
+      const el = document.createElement("div");
+      const statusClass = item.status === "exp" ? "item-exp" : "item-safe";
+      el.className = "inventory-item " + statusClass;
+      
+      // Tentukan emoji dan badge
+      const emoji = getItemEmoji(item.name);
+      let badge = '';
+      const days = daysUntilExpiry(item.exp);
+      
+      if (item.status === "exp" && days <= 0) {
+        badge = `<span class="badge-danger">⚠️ Sudah Expired!</span>`;
+      } else if (item.status === "warning" || days <= 3) {
+        badge = `<span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 9999px; font-weight: 700; animation: pulse 1s infinite;">⏰ ${days} Hari!</span>`;
+      } else {
+        badge = `<span style="color: #10B981; font-size: 0.75rem; font-weight: 600;">✓ Aman</span>`;
+      }
+
+      el.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1;">
+          <span style="font-size: 1.5rem;">${emoji}</span>
+          <div>
+            <p style="font-size: 0.875rem; font-weight: 500;">${item.name}</p>
+            <p class="text-xs">Exp: ${item.exp}</p>
           </div>
-          <span style="color:#10B981; font-size:0.75rem; font-weight:600;">✅ Baru</span>
         </div>
+        ${badge}
       `;
-      suggestRecipe();
-    }, 2000);
-  };
 
-  reader.readAsDataURL(file);
-});
-    window.onload = suggestRecipe;
+      container.prepend(el);
+    }
+
+    // Fungsi localStorage untuk menyimpan inventory
+    function saveInventoryToStorage() {
+      const items = [];
+      document.querySelectorAll('.inventory-item').forEach(el => {
+        const name = el.querySelector('p').textContent;
+        const exp = el.querySelector('.text-xs').textContent.replace('Exp: ', '');
+        items.push({ name, exp });
+      });
+      localStorage.setItem('mealprep_inventory', JSON.stringify(items));
+    }
+
+    // Fungsi localStorage untuk membaca inventory
+    function loadInventoryFromStorage() {
+      const saved = localStorage.getItem('mealprep_inventory');
+      if (saved) {
+        const items = JSON.parse(saved);
+        items.forEach(item => {
+          addToInventory({
+            name: item.name,
+            exp: item.exp,
+            status: getItemStatus(item.exp)
+          });
+        });
+      }
+    }
+
+    window.onload = function() {
+      loadInventoryFromStorage();
+      suggestRecipe();
+      
+      // Setup OCR scanner
+      document.getElementById("scanBill").addEventListener("change", async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        alert("📸 Sedang scan struk dengan OCR...");
+
+        try {
+          const result = await Tesseract.recognize(
+            file,
+            'ind+eng',
+            { logger: m => console.log("OCR Progress:", m.progress) }
+          );
+
+          const text = result.data.text;
+          console.log("✅ HASIL OCR:\n", text);
+
+          processReceipt(text);
+        } catch (error) {
+          alert("❌ Gagal scan struk: " + error.message);
+          console.error(error);
+        }
+      });
+    };
+    
     window.onclick = (e) => { if(e.target == document.getElementById('recipeModal')) closeRecipe(); };
 
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const user = document.getElementById('accName').value;
       document.getElementById('loginOverlay').style.display = 'none';
-      document.getElementById('headerWelcome').innerText = "Halo, " + user + "! Siap masak apa hari ini?";
+      document.getElementById('headerWelcome').innerText = "Halo, " + user + "! Hemat bahan • Resep Sehat • Notifikasi";
     });
   </script>
 </body>
