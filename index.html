@@ -10,184 +10,54 @@
 
   <style>
     /* Reset & Base Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #f9fafb; color: #111827; line-height: 1.5; display: flex; flex-direction: column; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+    main { flex-grow: 1; padding: 1rem; max-width: 28rem; margin: 0 auto; width: 100%; }
+    
+    header { background-color: #7FB77E; color: white; padding: 3rem 1rem 1.5rem 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 50; border-bottom-left-radius: 1.5rem; border-bottom-right-radius: 1.5rem; }
+    header h1 { font-family: 'Pacifico', cursive; font-size: 1.8rem; }
 
-    body {
-      background-color: #f9fafb;
-      color: #111827;
-      line-height: 1.5;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-
-    main {
-      flex-grow: 1;
-      padding: 1rem;
-      max-width: 28rem;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    header {
-      background-color: #7FB77E;
-      color: white;
-      padding: 3rem 1rem 1.5rem 1rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      border-bottom-left-radius: 1.5rem;
-      border-bottom-right-radius: 1.5rem;
-    }
-
-    .header-content {
-      max-width: 28rem;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h1 {
-      font-family: 'Pacifico', cursive;
-      font-size: 1.8rem;
-    }
-
-    .card {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 1rem;
-      margin-bottom: 1.5rem;
-      border: 1px solid #f3f4f6;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-title-box {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-
-    .icon-bg {
-      padding: 0.75rem;
-      border-radius: 9999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
+    .card { background: white; padding: 1.5rem; border-radius: 1rem; margin-bottom: 1.5rem; border: 1px solid #f3f4f6; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+    .card-title-box { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+    .icon-bg { padding: 0.75rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; }
     .icon-green { background-color: #f0fdf4; color: #7FB77E; }
     .icon-amber { background-color: #fffbeb; color: #f59e0b; }
 
-    .btn-primary {
-      width: 100%;
-      background-color: #7FB77E;
-      color: white;
-      font-weight: 700;
-      padding: 0.75rem;
-      border-radius: 0.75rem;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
+    .btn-primary { width: 100%; background-color: #7FB77E; color: white; font-weight: 700; padding: 0.75rem; border-radius: 0.75rem; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: 0.2s; }
+    .btn-primary:active { transform: scale(0.98); }
 
-    /* Inventory Items */
-    .inventory-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      border: 1px solid;
-      margin-top: 0.75rem;
-    }
+    /* Input Style */
+    .input-group { margin-bottom: 1rem; }
+    .input-group input { width: 100%; padding: 0.85rem; border: 1.5px solid #e5e7eb; border-radius: 0.75rem; outline: none; transition: 0.2s; font-size: 0.875rem; }
+    .input-group input:focus { border-color: #7FB77E; box-shadow: 0 0 0 3px rgba(127, 183, 126, 0.2); }
 
-    .item-exp { background-color: #fef2f2; border-color: #fee2e2; }
-    .item-safe { background-color: #f9fafb; border-color: #f3f4f6; }
+    /* Inventory & Recipe */
+    .inventory-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #f3f4f6; margin-top: 0.75rem; background: #f9fafb; }
+    .recipe-result { background: #f0fdf4; padding: 1rem; border-radius: 0.75rem; border: 1px solid #dcfce7; margin-top: 1rem; animation: slideIn 0.3s ease-out; }
+    
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 1000;
-      align-items: flex-end;
-    }
-
-    .modal-content {
-      background: white;
-      width: 100%;
-      max-width: 28rem;
-      margin: 0 auto;
-      border-top-left-radius: 1.5rem;
-      border-top-right-radius: 1.5rem;
-      padding: 2rem;
-      max-height: 85vh;
-      overflow-y: auto;
-      position: relative;
-    }
-
-    /* Receipt Look (Tulisan Saja) */
-    .receipt-container {
-      background: #fdfdfd;
-      border: 1px dashed #ccc;
-      padding: 1rem;
-      margin: 1rem 0;
-      font-family: 'Courier New', Courier, monospace;
-    }
-
-    .receipt-line {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.875rem;
-      border-bottom: 1px solid #eee;
-      padding: 0.25rem 0;
-    }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); z-index: 1000; align-items: flex-end; }
+    .modal-content { background: white; width: 100%; max-width: 28rem; margin: 0 auto; border-top-left-radius: 1.5rem; border-top-right-radius: 1.5rem; padding: 2rem; position: relative; }
+    .receipt-container { background: #fdfdfd; border: 1px dashed #ccc; padding: 1rem; margin: 1rem 0; font-family: monospace; }
+    .receipt-line { display: flex; justify-content: space-between; font-size: 0.875rem; border-bottom: 1px solid #eee; padding: 0.25rem 0; }
 
     .hidden { display: none; }
     .text-sm { font-size: 0.875rem; color: #4b5563; }
     .text-xs { font-size: 0.75rem; color: #6b7280; }
 
-    #loginOverlay {
-      position: fixed;
-      inset: 0;
-      background: #7FB77E;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1.5rem;
-      font-size: 0.75rem;
-      color: #9ca3af;
-      background: white;
-    }
+    #loginOverlay { position: fixed; inset: 0; background: #7FB77E; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    footer { text-align: center; padding: 1.5rem; font-size: 0.75rem; color: #9ca3af; background: white; border-top: 1px solid #f3f4f6; }
   </style>
 </head>
 <body>
 
   <div id="loginOverlay">
-    <div style="background:white; padding:2rem; border-radius:1.5rem; width:100%; max-width:24rem;">
+    <div style="background:white; padding:2rem; border-radius:1.5rem; width:100%; max-width:24rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
       <h2 style="font-family:'Pacifico'; color:#7FB77E; text-align:center; margin-bottom:1rem;">MealPrep</h2>
       <form id="loginForm">
-        <input type="text" id="accName" placeholder="Username" required style="width:100%; padding:0.75rem; margin-bottom:1rem; border:1px solid #ddd; border-radius:0.5rem;">
+        <input type="text" id="accName" placeholder="Username Anda" required style="width:100%; padding:0.75rem; margin-bottom:1rem; border:1px solid #ddd; border-radius:0.5rem; outline:none;">
         <button type="submit" class="btn-primary">Masuk ke Aplikasi</button>
       </form>
     </div>
@@ -205,44 +75,45 @@
   <main>
     <section class="card">
       <div class="card-title-box">
-        <div class="icon-bg icon-green">📸</div>
-        <h2 style="font-weight: 600;">Scan Struk Belanja</h2>
+        <div class="icon-bg icon-green">🍳</div>
+        <h2 style="font-weight: 600;">Mau Masak Apa?</h2>
       </div>
-      <p class="text-sm">Pindai foto struk untuk input otomatis.</p>
+      <p class="text-sm" style="margin-bottom: 1rem;">Masukkan bahan yang ingin kamu olah (misal: Ayam, Telur, Susu).</p>
+      <div class="input-group">
+        <input type="text" id="ingredientInput" placeholder="Ketik bahan di sini...">
+      </div>
+      <button onclick="findRecipeByInput()" class="btn-primary">Cari Rekomendasi</button>
+      
+      <div id="customRecipeResult"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-title-box">
+        <div class="icon-bg icon-green">📸</div>
+        <h2 style="font-weight: 600;">Scan Struk</h2>
+      </div>
       <input type="file" id="scanBill" accept="image/*" capture="environment" class="hidden">
-      <button onclick="document.getElementById('scanBill').click()" class="btn-primary" style="margin-top:1rem;">Ambil Foto Struk</button>
+      <button onclick="document.getElementById('scanBill').click()" class="btn-primary">Ambil Foto Struk</button>
     </section>
 
     <section class="card">
       <div class="card-title-box">
         <div class="icon-bg icon-amber">❄️</div>
-        <h2 style="font-weight: 600;">Isi Kulkas Anda</h2>
+        <h2 style="font-weight: 600;">Isi Kulkas</h2>
       </div>
       <div id="inventoryList">
-        <div class="inventory-item item-safe">
+        <div class="inventory-item">
           <p style="font-size: 0.875rem; font-weight: 500;">Dada Ayam Fillet</p>
           <p class="text-xs">Exp: 20 Apr 2026</p>
         </div>
       </div>
     </section>
-
-    <section class="card">
-      <div class="card-title-box">
-        <div class="icon-bg icon-green">📖</div>
-        <h2 style="font-weight: 600;">Rekomendasi Masak</h2>
-      </div>
-      <div id="recommendedRecipe"></div>
-    </section>
   </main>
 
   <div id="scanResultModal" class="modal">
     <div class="modal-content">
-      <h2 style="margin-bottom: 0.5rem;">Hasil Ekstraksi Struk</h2>
-      <p class="text-sm">Sistem mengenali barang berikut:</p>
-      
-      <div class="receipt-container" id="receiptTextList">
-        </div>
-
+      <h2 style="margin-bottom: 0.5rem;">Data Struk Terbaca</h2>
+      <div class="receipt-container" id="receiptTextList"></div>
       <button onclick="confirmResults()" class="btn-primary">Simpan ke Inventori</button>
       <p onclick="closeScanModal()" style="text-align:center; margin-top:1rem; color:#999; font-size:0.875rem; cursor:pointer;">Batal</p>
     </div>
@@ -253,33 +124,55 @@
   </footer>
 
   <script>
+    // Library Resep yang diperluas
     const recipeLibrary = [
-      { keyword: "Ayam", name: "Tumis Ayam Mentega", desc: "Tinggi protein menggunakan stok ayam." },
-      { keyword: "Susu", name: "Creamy Oatmeal", desc: "Manfaatkan susu untuk sarapan." }
+      { keyword: "Ayam", name: "Tumis Ayam Mentega", desc: "Potong ayam kotak-kotak, tumis dengan mentega dan kecap manis." },
+      { keyword: "Susu", name: "Creamy Oatmeal", desc: "Rebus oat dengan susu hingga mengental, tambahkan buah." },
+      { keyword: "Telur", name: "Orak Arik Telur Sayur", desc: "Kocok telur, tumis dengan bayam atau wortel yang baru dibeli." },
+      { keyword: "Brokoli", name: "Cah Brokoli Bawang Putih", desc: "Tumis bawang putih cincang, masukkan brokoli dan sedikit saus tiram." }
     ];
 
-    // Data Simulasi Struk
+    // --- FITUR BARU: CARI RESEP BERDASARKAN INPUT ---
+    function findRecipeByInput() {
+      const input = document.getElementById('ingredientInput').value.toLowerCase();
+      const resultDiv = document.getElementById('customRecipeResult');
+      
+      if (!input) {
+        resultDiv.innerHTML = "<p class='text-xs' style='color:red; margin-top:0.5rem;'>Tolong masukkan minimal satu bahan!</p>";
+        return;
+      }
+
+      // Cari resep yang keyword-nya ada di dalam input user
+      const matches = recipeLibrary.filter(r => input.includes(r.keyword.toLowerCase()));
+
+      if (matches.length > 0) {
+        resultDiv.innerHTML = matches.map(m => `
+          <div class="recipe-result">
+            <h4 style="font-size: 0.9rem; color: #166534;">✨ Rekomendasi: ${m.name}</h4>
+            <p class="text-xs" style="margin-top:0.25rem;">${m.desc}</p>
+          </div>
+        `).join('');
+      } else {
+        resultDiv.innerHTML = `
+          <div class="recipe-result" style="background:#fef2f2; border-color:#fee2e2;">
+            <p class="text-xs" style="color:#991b1b;">Maaf, resep untuk bahan tersebut belum tersedia.</p>
+          </div>`;
+      }
+    }
+
+    // --- LOGIKA SCAN (Sesuai Permintaan Sebelumnya) ---
     const simulatedData = [
       { name: "SUSU UHT FULL CREAM", exp: "2026-05-12", qty: "1 PCS" },
-      { name: "TELUR AYAM 10 BUTIR", exp: "2026-05-05", qty: "1 PACK" },
-      { name: "BROKOLI HIJAU", exp: "2026-04-26", qty: "250 GRAM" }
+      { name: "TELUR AYAM 10 BUTIR", exp: "2026-05-05", qty: "1 PACK" }
     ];
-
-    // --- FUNGSI SCAN ---
 
     document.getElementById("scanBill").addEventListener("change", function(e) {
       if (!e.target.files[0]) return;
-      
-      const receiptBox = document.getElementById("receiptTextList");
-      receiptBox.innerHTML = "<p>Membaca teks...</p>";
+      document.getElementById("receiptTextList").innerHTML = "<p>Membaca teks...</p>";
       document.getElementById('scanResultModal').style.display = 'flex';
-
       setTimeout(() => {
-        receiptBox.innerHTML = simulatedData.map(d => `
-          <div class="receipt-line">
-            <span>${d.name}</span>
-            <span>${d.qty}</span>
-          </div>
+        document.getElementById("receiptTextList").innerHTML = simulatedData.map(d => `
+          <div class="receipt-line"><span>${d.name}</span><span>${d.qty}</span></div>
         `).join('');
       }, 1200);
     });
@@ -288,47 +181,21 @@
       const list = document.getElementById("inventoryList");
       simulatedData.forEach(d => {
         const div = document.createElement("div");
-        div.className = "inventory-item item-safe";
-        div.innerHTML = `
-          <div>
-            <p style="font-size: 0.875rem; font-weight: 500;">${d.name}</p>
-            <p class="text-xs">Exp: ${d.exp}</p>
-          </div>
-          <span style="color:#7FB77E; font-size:0.75rem; font-weight:bold;">${d.qty}</span>
-        `;
+        div.className = "inventory-item";
+        div.innerHTML = `<div><p style="font-size:0.875rem; font-weight:500;">${d.name}</p><p class="text-xs">Exp: ${d.exp}</p></div><span style="color:#7FB77E; font-size:0.75rem; font-weight:bold;">${d.qty}</span>`;
         list.prepend(div);
       });
       closeScanModal();
-      updateRecipe();
     }
 
-    function closeScanModal() {
-      document.getElementById('scanResultModal').style.display = 'none';
-    }
+    function closeScanModal() { document.getElementById('scanResultModal').style.display = 'none'; }
 
-    // --- LAINNYA ---
-
-    function updateRecipe() {
-      const invText = document.getElementById('inventoryList').innerText;
-      const display = document.getElementById('recommendedRecipe');
-      const match = recipeLibrary.find(r => invText.toLowerCase().includes(r.keyword.toLowerCase()));
-
-      if (match) {
-        display.innerHTML = `
-          <div style="background:#f9fafb; padding:1rem; border-radius:0.75rem; border:1px solid #eee;">
-            <h3 style="font-size:1rem;">${match.name}</h3>
-            <p class="text-xs">${match.desc}</p>
-          </div>`;
-      }
-    }
-
+    // Login logic
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       document.getElementById('loginOverlay').style.display = 'none';
       document.getElementById('headerWelcome').innerText = "Halo, " + document.getElementById('accName').value + "!";
     });
-
-    window.onload = updateRecipe;
   </script>
 </body>
 </html>
