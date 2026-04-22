@@ -488,183 +488,69 @@ l="stylesheet">
     }
 
     function closeRecipe() { document.getElementById('recipeModal').style.display = 'none'; }
+function processReceipt(text) {
+  const lines = text.split("\n");
+  
+  lines.forEach(line => {
+    line = line.trim();
 
-    // Generate tanggal kadaluarsa otomatis (default 7-14 hari)
-    function generateExpDate(days = 7) {
-      const date = new Date();
-      date.setDate(date.getDate() + days + Math.floor(Math.random() * 8)); // Random 7-14 hari
-      return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+    if (line.length > 3 && !line.match(/[0-9]{3,}/)) {
+      const item = {
+        name: line,
+        exp: generateExpDate(),
+        status: "safe"
+      };
+
+      addToInventory(item);
     }
-
-    // Hitung hari tersisa hingga kadaluarsa
-    function daysUntilExpiry(expDate) {
-      const exp = new Date(expDate);
-      const today = new Date();
-      const diff = Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
-      return diff;
-    }
-
-    // Tentukan status item (safe/warning/exp)
-    function getItemStatus(expDate) {
-      const days = daysUntilExpiry(expDate);
-      if (days <= 0) return "exp";
-      if (days <= 3) return "warning";
-      return "safe";
-    }
-
-    // Tentukan emoji berdasarkan nama item
-    function getItemEmoji(name) {
-      const lower = name.toLowerCase();
-      if (lower.includes('ayam') || lower.includes('daging') || lower.includes('sapi') || lower.includes('babi')) return '🍗';
-      if (lower.includes('susu') || lower.includes('yogurt') || lower.includes('keju')) return '🥛';
-      if (lower.includes('telur')) return '🥚';
-      if (lower.includes('ikan') || lower.includes('udang')) return '🐟';
-      if (lower.includes('buah') || lower.includes('apel') || lower.includes('jeruk') || lower.includes('mangga')) return '🍎';
-      if (lower.includes('sayur') || lower.includes('brokoli') || lower.includes('wortel')) return '🥦';
-      if (lower.includes('roti') || lower.includes('bread')) return '🍞';
-      if (lower.includes('mie') || lower.includes('pasta')) return '🍝';
-      if (lower.includes('beras') || lower.includes('nasi')) return '🍚';
-      if (lower.includes('mentega') || lower.includes('minyak')) return '🧈';
-      return '📦'; // Default
-    }
-
-    function processReceipt(text) {
-      const lines = text.split("\n").filter(line => line.trim().length > 0);
-      let itemsAdded = 0;
-      
-      lines.forEach((line, index) => {
-        line = line.trim();
-        
-        // Skip jika baris terlalu pendek
-        if (line.length < 3) return;
-        
-        // Skip jika berisi terlalu banyak angka (kemungkinan harga/total)
-        if (line.match(/\d{2,}/g) && line.match(/\d{2,}/g).length > 2) return;
-        
-        // Skip jika hanya angka
-        if (/^\d+$/.test(line)) return;
-        
-        // Skip jika baris sebelumnya sama (duplikasi)
-        if (index > 0 && line === lines[index - 1].trim()) return;
-
-        const item = {
-          name: line,
-          exp: generateExpDate(),
-          status: getItemStatus(generateExpDate())
-        };
-
-        addToInventory(item);
-        itemsAdded++;
-      });
-
-      // Simpan inventory ke localStorage
-      saveInventoryToStorage();
-      
-      if (itemsAdded > 0) {
-        alert(`✅ ${itemsAdded} item ditambahkan ke kulkas!`);
-        suggestRecipe(); // Update rekomendasi resep
-      } else {
-        alert('❌ Tidak ada item terdeteksi. Coba foto yang lebih jelas.');
-      }
-    }
-
-    function addToInventory(item) {
-      const container = document.getElementById("inventoryList");
-      
-      // Buat element item
-      const el = document.createElement("div");
-      const statusClass = item.status === "exp" ? "item-exp" : "item-safe";
-      el.className = "inventory-item " + statusClass;
-      
-      // Tentukan emoji dan badge
-      const emoji = getItemEmoji(item.name);
-      let badge = '';
-      const days = daysUntilExpiry(item.exp);
-      
-      if (item.status === "exp" && days <= 0) {
-        badge = `<span class="badge-danger">⚠️ Sudah Expired!</span>`;
-      } else if (item.status === "warning" || days <= 3) {
-        badge = `<span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 9999px; font-weight: 700; animation: pulse 1s infinite;">⏰ ${days} Hari!</span>`;
-      } else {
-        badge = `<span style="color: #10B981; font-size: 0.75rem; font-weight: 600;">✓ Aman</span>`;
-      }
-
-      el.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1;">
-          <span style="font-size: 1.5rem;">${emoji}</span>
-          <div>
-            <p style="font-size: 0.875rem; font-weight: 500;">${item.name}</p>
-            <p class="text-xs">Exp: ${item.exp}</p>
-          </div>
-        </div>
-        ${badge}
-      `;
-
-      container.prepend(el);
-    }
-
-    // Fungsi localStorage untuk menyimpan inventory
-    function saveInventoryToStorage() {
-      const items = [];
-      document.querySelectorAll('.inventory-item').forEach(el => {
-        const name = el.querySelector('p').textContent;
-        const exp = el.querySelector('.text-xs').textContent.replace('Exp: ', '');
-        items.push({ name, exp });
-      });
-      localStorage.setItem('mealprep_inventory', JSON.stringify(items));
-    }
-
-    // Fungsi localStorage untuk membaca inventory
-    function loadInventoryFromStorage() {
-      const saved = localStorage.getItem('mealprep_inventory');
-      if (saved) {
-        const items = JSON.parse(saved);
-        items.forEach(item => {
-          addToInventory({
-            name: item.name,
-            exp: item.exp,
-            status: getItemStatus(item.exp)
-          });
-        });
-      }
-    }
-
-    window.onload = function() {
-      loadInventoryFromStorage();
-      suggestRecipe();
-      
-      // Setup OCR scanner
-      document.getElementById("scanBill").addEventListener("change", async function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        alert("📸 Sedang scan struk dengan OCR...");
-
-        try {
-          const result = await Tesseract.recognize(
-            file,
-            'ind+eng',
-            { logger: m => console.log("OCR Progress:", m.progress) }
-          );
-
-          const text = result.data.text;
-          console.log("✅ HASIL OCR:\n", text);
-
-          processReceipt(text);
-        } catch (error) {
-          alert("❌ Gagal scan struk: " + error.message);
-          console.error(error);
-        }
-      });
-    };
-    
+  });
+}
+    window.onload = suggestRecipe;
     window.onclick = (e) => { if(e.target == document.getElementById('recipeModal')) closeRecipe(); };
 
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const user = document.getElementById('accName').value;
       document.getElementById('loginOverlay').style.display = 'none';
-      document.getElementById('headerWelcome').innerText = "Halo, " + user + "! Hemat bahan • Resep Sehat • Notifikasi";
+      document.getElementById('headerWelcome').innerText = "Halo, " + user + "! Siap masak apa hari ini?";
+      // 🔥 TAMBAHKAN INI
+document.getElementById("scanBill").addEventListener("change", async function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  alert("Sedang scan struk...");
+
+  const result = await Tesseract.recognize(
+    file,
+    'ind+eng',
+    { logger: m => console.log(m) }
+  );
+
+  const text = result.data.text;
+  console.log("HASIL OCR:", text);
+
+  processReceipt(text);
+});
+
+function addToInventory(item) {
+  const container = document.getElementById("inventoryList");
+
+  const el = document.createElement("div");
+  el.className = "inventory-item " + (item.status === "exp" ? "item-exp" : "item-safe");
+
+  el.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <span style="font-size: 1.5rem;">🥛</span>
+      <div>
+        <p style="font-size: 0.875rem; font-weight: 500;">${item.name}</p>
+        <p class="text-xs">Exp: ${item.exp}</p>
+      </div>
+    </div>
+    <span class="badge-danger">Baru</span>
+  `;
+
+  container.prepend(el);
+}
     });
   </script>
 </body>
