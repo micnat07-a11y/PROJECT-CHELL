@@ -48,11 +48,17 @@
   ],
   "screenshots": [
       {
-      "src": "https://micnat07-a11y.github.io/PROJECT-CHELL/icons/screenshot-narrow.png (1).png",
+      "src": "https://micnat07-a11y.github.io/PROJECT-CHELL/icons/screenshot-narrow.png(1).png",
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Beranda MealPrep"
+    },
+    {
+    "src": "icons/screenshot-wide.png",
+    "sizes": "1280x720",
+    "type": "image/png",
+    "form_factor": "wide"
     }
   ],
   "shortcuts": [
