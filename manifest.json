@@ -23,21 +23,5 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ],
-  "screenshots": [
-    {
-      "src": "path/ke/screenshot1.png",
-      "sizes": "899x1600",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Tampilan Beranda di Mobile"
-    },
-    {
-      "src": "path/ke/screenshot-narrow.png (1).png",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Tampilan Desktop Aplikasi MealPrep"
-    }
   ]
 }
