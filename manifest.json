@@ -1,27 +1,53 @@
 {
+
   "id": "/",
+
   "name": "MealPrep",
+
   "short_name": "MealPrep",
+
   "description": "Aplikasi meal prep untuk hemat bahan, resep sehat, dan notifikasi kadaluarsa.",
+
   "start_url": "./index.html",
+
   "scope": "/",
+
   "display": "standalone",
+
   "background_color": "#7FB77E",
+
   "theme_color": "#7FB77E",
+
   "orientation": "portrait",
+
   "lang": "id",
+
   "icons": [
+
     {
+
       "src": "https://cdn-icons-png.flaticon.com/512/1996/1996055.png",
+
       "sizes": "192x192",
+
       "type": "image/png",
+
       "purpose": "any"
+
     },
+
     {
+
       "src": "https://cdn-icons-png.flaticon.com/512/1996/1996055.png",
+
       "sizes": "512x512",
+
       "type": "image/png",
+
       "purpose": "maskable"
+
     }
+
   ]
+
 }
