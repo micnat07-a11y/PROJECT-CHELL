@@ -1,21 +1,41 @@
 {
+  "id": "mealprep-fridge-guardian",
   "name": "MealPrep - Fridge Guardian",
   "short_name": "MealPrep",
+  "description": "Hemat bahan • Resep Sehat",
   "start_url": "index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#f9fafb",
   "theme_color": "#7FB77E",
-  "description": "Hemat bahan • Resep Sehat",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "logo-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Tampilan Utama MealPrep"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tampilan Utama MealPrep"
     }
   ]
 }
