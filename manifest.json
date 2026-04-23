@@ -1,40 +1,145 @@
 {
-  "id": "mealprep-fridge-guardian",
-  "name": "MealPrep - Fridge Guardian",
+
+  "id": "./",
+
+  "name": "MealPrep",
+
   "short_name": "MealPrep",
-  "description": "Hemat bahan • Resep Sehat",
-  "start_url": "index.html",
+
+  "description": "Aplikasi meal prep untuk hemat bahan, resep sehat, dan notifikasi kadaluarsa.",
+
+  "start_url": "./",
+
+  "scope": "./",
+
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#f9fafb",
+
+  "display_override": ["window-controls-overlay", "standalone"],
+
+  "background_color": "#7FB77E",
+
   "theme_color": "#7FB77E",
+
+  "orientation": "portrait",
+
+  "lang": "id",
+
+  "dir": "ltr",
+
+  "categories": ["food", "health", "lifestyle"],
+
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+
+  "launch_handler": {
+
+    "client_mode": "navigate-existing"
+
+  },
+
+  "share_target": {
+
+    "action": "./",
+
+    "method": "GET",
+
+    "params": {
+
+      "title": "title",
+
+      "text": "text",
+
+      "url": "url"
+
+    }
+
+  },
+
   "icons": [
+
     {
+
       "src": "icons/logo-192x192.png",
+
       "sizes": "192x192",
+
       "type": "image/png",
+
       "purpose": "any"
+
     },
+
     {
+
       "src": "icons/logo-512x512.png",
+
       "sizes": "512x512",
+
       "type": "image/png",
+
       "purpose": "any"
+
     },
+
     {
+
       "src": "icons/logo-maskable-512x512.png",
+
       "sizes": "512x512",
+
       "type": "image/png",
+
       "purpose": "maskable"
+
     }
+
   ],
+
   "screenshots": [
-    {
-      "src": "icons/screenshot1.png",
-      "sizes": "512x512",
+
+      {
+
+      "src": "https://micnat07-a11y.github.io/PROJECT-CHELL/icons/screenshot-narrow.png (1).png",
+
+      "sizes": "1080x1920",
+
       "type": "image/png",
+
       "form_factor": "narrow",
-      "label": "Tampilan Utama Fridge Guardian"
+
+      "label": "Beranda MealPrep"
+
     }
-  ]
+
+  ],
+
+  "shortcuts": [
+
+    {
+
+      "name": "Buka Beranda",
+
+      "short_name": "Home",
+
+      "url": "./",
+
+      "icons": [
+
+        {
+
+          "src": "icons/logo-192x192.png",
+
+          "sizes": "192x192",
+
+          "type": "image/png"
+
+        }
+
+      ]
+
+    }
+
+  ],
+
+  "prefer_related_applications": false
+
 }
