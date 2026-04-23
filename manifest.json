@@ -34,9 +34,9 @@
     },
     {
       "src": "path/ke/screenshot-narrow.png (1).png",
-      "sizes": "1080x1920",
+      "sizes": "1920x1080",
       "type": "image/png",
-      "form_factor": "narrow",
+      "form_factor": "wide",
       "label": "Tampilan Desktop Aplikasi MealPrep"
     }
   ]
