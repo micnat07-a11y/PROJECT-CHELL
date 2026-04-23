@@ -1,73 +1,43 @@
 {
-  "id": "./",
+  "id": "/",
   "name": "MealPrep",
   "short_name": "MealPrep",
   "description": "Aplikasi meal prep untuk hemat bahan, resep sehat, dan notifikasi kadaluarsa.",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "./index.html",
+  "scope": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
   "background_color": "#7FB77E",
   "theme_color": "#7FB77E",
   "orientation": "portrait",
   "lang": "id",
-  "dir": "ltr",
-  "categories": ["food", "health", "lifestyle"],
-  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
-  "launch_handler": {
-    "client_mode": "navigate-existing"
-  },
-  "share_target": {
-    "action": "./",
-    "method": "GET",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url"
-    }
-  },
   "icons": [
     {
-      "src": "icons/logo-192x192.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/1996/1996055.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/logo-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/logo-maskable-512x512.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/1996/1996055.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
   "screenshots": [
-      {
-      "src": "https://micnat07-a11y.github.io/PROJECT-CHELL/icons/screenshot-narrow.png (1).png",
+    {
+      "src": "path/ke/screenshot1.png",
+      "sizes": "899x1600",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tampilan Beranda di Mobile"
+    },
+    {
+      "src": "path/ke/screenshot-narrow.png (1).png",
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Beranda MealPrep"
+      "label": "Tampilan Desktop Aplikasi MealPrep"
     }
-  ],
-  "shortcuts": [
-    {
-      "name": "Buka Beranda",
-      "short_name": "Home",
-      "url": "./",
-      "icons": [
-        {
-          "src": "icons/logo-192x192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    }
-  ],
-  "prefer_related_applications": false
+  ]
 }
